@@ -10,7 +10,11 @@ namespace rv32i {
 
 template <typename Oper, class... ValuesGetters>
 struct JalInstruction: Instruction {
-    ExtendedOpcode get_extended_opcode() const noexcept override {
+    constexpr const char* get_name() const noexcept override {
+        return Oper::name;
+    }
+
+    constexpr ExtendedOpcode get_extended_opcode() const noexcept override {
         return Oper::ext_opcode;
     }
 
@@ -26,6 +30,7 @@ struct JalInstruction: Instruction {
 };
 
 struct OperJal {
+    static constexpr const char* name = "jal";
     static constexpr ExtendedOpcode ext_opcode = {PlainOpcodes::JAL, 0, 0};
 
     static Address new_pc(Address pc, UnsignValue offset) {
@@ -35,6 +40,7 @@ struct OperJal {
 using Jal = JalInstruction<OperJal, PCValGetter, ImmValGetter<Operands::IMM_J>>;
 
 struct OperJalr {
+    static constexpr const char* name = "jalr";
     static constexpr ExtendedOpcode ext_opcode = {PlainOpcodes::JALR, 0, 0};
 
     static Address new_pc(UnsignValue rs1, UnsignValue offset) {

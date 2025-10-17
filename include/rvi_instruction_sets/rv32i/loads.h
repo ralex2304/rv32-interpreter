@@ -9,7 +9,11 @@ namespace rvi {
 
 template <typename Oper>
 struct LoadInstruction: Instruction {
-    ExtendedOpcode get_extended_opcode() const noexcept override {
+    constexpr const char* get_name() const noexcept override {
+        return Oper::name;
+    }
+
+    constexpr ExtendedOpcode get_extended_opcode() const noexcept override {
         return Oper::ext_opcode;
     }
 
@@ -37,30 +41,35 @@ struct LoadInstruction: Instruction {
 namespace rv32i {
 
 struct OperLb {
+    static constexpr const char* name = "lb";
     static constexpr ExtendedOpcode ext_opcode = {PlainOpcodes::LOAD, 0b000, 0};
     using ReadT = int8_t;
 };
 using Lb = LoadInstruction<OperLb>;
 
 struct OperLh {
+    static constexpr const char* name = "lh";
     static constexpr ExtendedOpcode ext_opcode = {PlainOpcodes::LOAD, 0b001, 0};
     using ReadT = int16_t;
 };
 using Lh = LoadInstruction<OperLh>;
 
 struct OperLw {
+    static constexpr const char* name = "lw";
     static constexpr ExtendedOpcode ext_opcode = {PlainOpcodes::LOAD, 0b010, 0};
     using ReadT = int32_t;
 };
 using Lw = LoadInstruction<OperLw>;
 
 struct OperLbu {
+    static constexpr const char* name = "lbu";
     static constexpr ExtendedOpcode ext_opcode = {PlainOpcodes::LOAD, 0b100, 0};
     using ReadT = uint8_t;
 };
 using Lbu = LoadInstruction<OperLbu>;
 
 struct OperLhu {
+    static constexpr const char* name = "lhu";
     static constexpr ExtendedOpcode ext_opcode = {PlainOpcodes::LOAD, 0b101, 0};
     using ReadT = uint16_t;
 };

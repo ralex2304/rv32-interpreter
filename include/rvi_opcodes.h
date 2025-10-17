@@ -57,8 +57,8 @@ class ExtendedOpcodesFactory {
 
                             ExtendedOpcode(raw_instr)}) {}
 
-        inline auto cbegin() const noexcept { return ext_opcodes_.cbegin(); }
-        inline auto cend()   const noexcept { return ext_opcodes_.cend(); }
+        inline auto begin() const noexcept { return ext_opcodes_.cbegin(); }
+        inline auto end()   const noexcept { return ext_opcodes_.cend(); }
         constexpr size_t size() const noexcept { return ext_opcodes_.size(); }
 
     private:

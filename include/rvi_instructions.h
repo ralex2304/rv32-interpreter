@@ -11,14 +11,21 @@
 namespace rvi {
 
 struct Instruction {
-    virtual ExtendedOpcode get_extended_opcode() const noexcept = 0;
+    virtual constexpr const char* get_name() const noexcept = 0;
+    virtual constexpr ExtendedOpcode get_extended_opcode() const noexcept = 0;
 
     virtual ExecStatus execute(RviState* state, const Operands& operands) = 0;
+
+    virtual ~Instruction() {}
 };
 
 template <class Oper, class... ValuesGetters>
 struct SimpleInstruction: Instruction {
-    ExtendedOpcode get_extended_opcode() const noexcept override {
+    constexpr const char* get_name() const noexcept override {
+        return Oper::name;
+    }
+
+    constexpr ExtendedOpcode get_extended_opcode() const noexcept override {
         return Oper::ext_opcode;
     }
 
@@ -34,7 +41,11 @@ struct SimpleInstruction: Instruction {
 
 template <class Oper>
 struct UnimplementedInstruction: Instruction {
-    ExtendedOpcode get_extended_opcode() const noexcept override {
+    constexpr const char* get_name() const noexcept override {
+        return Oper::name;
+    }
+
+    constexpr ExtendedOpcode get_extended_opcode() const noexcept override {
         return Oper::ext_opcode;
     }
 

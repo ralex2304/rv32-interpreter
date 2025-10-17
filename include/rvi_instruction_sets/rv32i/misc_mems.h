@@ -8,8 +8,8 @@ namespace rvi {
 namespace rv32i {
 
 struct OperFence {
-    static constexpr ExtendedOpcode ext_opcode = {PlainOpcodes::MISC_MEM, 0, 0};
     static constexpr const char* name = "fence";
+    static constexpr ExtendedOpcode ext_opcode = {PlainOpcodes::MISC_MEM, 0, 0};
 };
 using Fence = UnimplementedInstruction<OperFence>;
 
