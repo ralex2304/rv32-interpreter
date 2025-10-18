@@ -1,4 +1,5 @@
 #include "rvi_datatypes.h"
+#include "rvi_elf.h"
 #include "rvi_state.h"
 
 #include <cassert>
@@ -10,16 +11,37 @@
 
 using namespace rvi;
 
+namespace {
+
+enum RegABI {
+    ZERO =  0,
+    RA   =  1,
+    SP   =  2,
+    GP   =  3,
+    TP   =  4,
+    T0   =  5, T1, T2,
+    FP   =  8,
+    S0   =  8, S1,
+    A0   = 10, A1, A2, A3, A4, A5, A6, A7,
+    S2   = 18, S3, S4, S5, S6, S7, S8, S9, S10, S11,
+    T3   = 28, T4, T5, T6,
+
+    REG_ABI_LAST_REG
+};
+static_assert(REG_ABI_LAST_REG == REG_NUM);
+
+} // namespace
+
 ExecStatus RviState::syscall() {
     enum ArgRegsNum {
-        RET_VAL        = 10 + /*a*/0,
-        ARG1           = 10 + /*a*/0,
-        ARG2           = 10 + /*a*/1,
-        ARG3           = 10 + /*a*/2,
-        ARG4           = 10 + /*a*/3,
-        ARG5           = 10 + /*a*/4,
-        ARG6           = 10 + /*a*/5,
-        SYSCALL_NUMBER = 10 + /*a*/7,
+        RET_VAL        = A0,
+        ARG1           = A0,
+        ARG2           = A1,
+        ARG3           = A2,
+        ARG4           = A3,
+        ARG5           = A4,
+        ARG6           = A5,
+        SYSCALL_NUMBER = A7,
     };
 
     switch (static_cast<Syscalls_>(regs.get(SYSCALL_NUMBER))) {
@@ -39,9 +61,37 @@ ExecStatus RviState::syscall() {
     }
 }
 
-void RviState::load_elf_(const std::filesystem::path) {
-    // TODO: elf loading
-    throw std::runtime_error("Elf loading is unimplemented yet");
+void RviState::load_elf_(const std::filesystem::path elf_path) {
+    ElfLoader elf(elf_path);
+
+    elf.load_to_memory(mem);
+
+    pc.set(elf.get_entry_pc());
+}
+
+void RviState::init_execution_environment_(const std::vector<std::string_view> argv) {
+    UnsignValue argc = static_cast<UnsignValue>(argv.size());
+
+    Address sp = static_cast<Address>(0 - (PAGE_SIZE * 4));
+    regs.set(SP, sp);
+
+    mem.set<UnsignValue>(sp, argc);
+    sp += sizeof(UnsignValue);
+
+    Address argv_string_addr = sp + static_cast<Address>((argc + 1) * sizeof(Address));
+
+    for (auto arg: argv) {
+        mem.set<Address>(sp, argv_string_addr);
+        sp += sizeof(Address);
+
+        for (Address i = 0; i <= arg.size(); i++) { // TODO: mem.cpy
+            mem.set(argv_string_addr + i, arg[i]);
+        }
+        argv_string_addr += static_cast<Address>(arg.size()) + 1;
+    }
+
+    mem.set<Address>(sp, 0);
+    sp += sizeof(Address);
 }
 
 UnsignValue RviState::sys_read_(const SignValue fd, Address buf, const UnsignValue count) {

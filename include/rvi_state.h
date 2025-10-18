@@ -73,7 +73,9 @@ class RviState {
         ExecStatus syscall();
 
     private:
-        void load_elf_(const std::filesystem::path filename);
+        void load_elf_(const std::filesystem::path elf_path);
+
+        void init_execution_environment_(const std::vector<std::string_view> argv);
 
         UnsignValue sys_read_(SignValue fd, Address buf, UnsignValue count);
 
