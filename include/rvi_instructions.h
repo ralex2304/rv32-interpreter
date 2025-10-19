@@ -52,7 +52,8 @@ struct UnimplementedInstruction: Instruction {
     ExecStatus execute(RviState*, const Operands&) const override {
         using namespace std::literals;
 
-        throw std::runtime_error("Instruction \""s + std::string(Oper::name) + "\" is not implemented"s);
+        throw std::runtime_error("Instruction \""s + std::string(Oper::name) +
+                                                    "\" is not implemented"s);
     }
 };
 

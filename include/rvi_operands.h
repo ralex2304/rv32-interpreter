@@ -5,6 +5,9 @@
 #include "rvi_state.h"
 
 #include <cstdint>
+#include <format>
+#include <loguru.hpp>
+#include <magic_enum/magic_enum.hpp>
 #include <sys/types.h>
 #include <variant>
 
@@ -46,13 +49,29 @@ class Operands {
             IMM_B       = 5,
             IMM_U       = 6,
             IMM_J       = 7,
-            FIELDS_NUM  = 8,
-            SHAMT       = 9,
+
+            FIELDS_NUM,
+
+            SHAMT       = 10,
         };
 
         template <typename T, Fields field>
         constexpr T get() const noexcept {
             return std::get<T>(fields_[field]);
+        }
+
+        void dump() const {
+            static constexpr const char* fields_names[] = {"RD", "RS1", "RS2", "I", "S", "B", "U", "J"};
+
+            std::string log_str;
+
+            for (size_t i = 0; i < IMM_I; i++)
+                log_str += std::format("{}: {:2} ", fields_names[i], std::get<RegisterNum>(fields_[i]));
+
+            for (size_t i = IMM_I; i < FIELDS_NUM; i++)
+                log_str += std::format("{}: {:8x} ", fields_names[i], std::get<Immediate>(fields_[i]));
+
+            LOG_F(INFO, "%s", log_str.c_str());
         }
 
     private:

@@ -6,6 +6,7 @@
 #include <array>
 #include <cstddef>
 #include <cstdint>
+#include <magic_enum/magic_enum.hpp>
 
 namespace rvi {
 
@@ -48,10 +49,8 @@ enum class ExtendedOpcodeType {
     OPCODE_FUNCT_3   = 1,
     OPCODE_FUNCT_3_7 = 2,
     RAW_INSTR        = 3,
-
-    TYPES_NUMBER
 };
-constexpr size_t EXTENDED_OPCODES_TYPES = static_cast<int>(ExtendedOpcodeType::TYPES_NUMBER);
+constexpr size_t EXTENDED_OPCODES_TYPES = magic_enum::enum_count<ExtendedOpcodeType>();
 
 using ExtendedOpcode = std::pair<ExtendedOpcodeValue, ExtendedOpcodeType>;
 

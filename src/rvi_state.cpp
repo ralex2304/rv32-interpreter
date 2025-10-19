@@ -1,10 +1,15 @@
+#include "rvi_state.h"
+
 #include "rvi_datatypes.h"
 #include "rvi_elf.h"
-#include "rvi_state.h"
+#include "rvi_operands.h"
 
 #include <cassert>
 #include <cstdint>
 #include <filesystem>
+#include <format>
+#include <ranges>
+#include <span>
 #include <stdexcept>
 #include <sys/types.h>
 #include <unistd.h>
@@ -32,32 +37,16 @@ static_assert(REG_ABI_LAST_REG == REG_NUM);
 
 } // namespace
 
-ExecStatus RviState::syscall() {
-    enum ArgRegsNum {
-        RET_VAL        = A0,
-        ARG1           = A0,
-        ARG2           = A1,
-        ARG3           = A2,
-        ARG4           = A3,
-        ARG5           = A4,
-        ARG6           = A5,
-        SYSCALL_NUMBER = A7,
-    };
+void RegisterFile::dump() const {
+    std::string str = "00: zzzzzzzz";
 
-    switch (static_cast<Syscalls_>(regs.get(SYSCALL_NUMBER))) {
-        case Syscalls_::READ:
-            regs.set(RET_VAL, sys_read_(static_cast<SignValue>(regs.get(ARG1)),
-                                        regs.get(ARG2), regs.get(ARG3)));
-            return ExecStatus::SUCCESS;
-        case Syscalls_::WRITE:
-            regs.set(RET_VAL, sys_write_(static_cast<SignValue>(regs.get(ARG1)),
-                                         regs.get(ARG2), regs.get(ARG3)));
-            return ExecStatus::SUCCESS;
-        case Syscalls_::EXIT:
-            return ExecStatus::EXIT;
+    for (size_t i = 1; i < 32; i++) {
+        str += std::format(" {:8x}", regs_[i]);
 
-        default:
-            throw std::runtime_error("Invalid syscall");
+        if (i % 8 == 7) {
+            LOG_F(INFO, "%s", str.c_str());
+            str = std::format("{:02}:", i+1);
+        }
     }
 }
 
@@ -93,6 +82,35 @@ void RviState::init_execution_environment(const std::vector<std::string_view> ar
 
     mem.set<Address>(sp, 0);
     sp += sizeof(Address);
+}
+
+ExecStatus RviState::syscall() {
+    enum ArgRegsNum {
+        RET_VAL        = A0,
+        ARG1           = A0,
+        ARG2           = A1,
+        ARG3           = A2,
+        ARG4           = A3,
+        ARG5           = A4,
+        ARG6           = A5,
+        SYSCALL_NUMBER = A7,
+    };
+
+    switch (static_cast<Syscalls_>(regs.get(SYSCALL_NUMBER))) {
+        case Syscalls_::READ:
+            regs.set(RET_VAL, sys_read_(static_cast<SignValue>(regs.get(ARG1)),
+                                        regs.get(ARG2), regs.get(ARG3)));
+            return ExecStatus::SUCCESS;
+        case Syscalls_::WRITE:
+            regs.set(RET_VAL, sys_write_(static_cast<SignValue>(regs.get(ARG1)),
+                                         regs.get(ARG2), regs.get(ARG3)));
+            return ExecStatus::SUCCESS;
+        case Syscalls_::EXIT:
+            return ExecStatus::EXIT;
+
+        default:
+            throw std::runtime_error("Invalid syscall");
+    }
 }
 
 UnsignValue RviState::sys_read_(const SignValue fd, Address buf, const UnsignValue count) {

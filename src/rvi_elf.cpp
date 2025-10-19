@@ -1,5 +1,3 @@
-
-
 #include "rvi_elf.h"
 
 #include <cerrno>
@@ -13,8 +11,7 @@
 #include <sys/stat.h>
 #include <unistd.h>
 
-namespace rvi {
-
+using namespace rvi;
 using namespace std::literals;
 
 MmapFile::MmapFile(const std::filesystem::path path) {
@@ -124,6 +121,4 @@ void ElfLoader::verify_elf_header_() const {
     if (elf_header_->e_shentsize != sizeof(Elf32_Shdr))
         throw std::runtime_error("Invalid ELF section header size");
 }
-
-} // namespace rvi
 

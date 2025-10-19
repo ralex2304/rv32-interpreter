@@ -58,6 +58,8 @@ class RegisterFile {
             return regs_[index - 1] = value;
         }
 
+        void dump() const;
+
     private:
         std::array<UnsignValue, REG_NUM - 1> regs_;
 };
