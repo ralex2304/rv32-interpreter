@@ -14,7 +14,7 @@ struct Instruction {
     virtual constexpr const char* get_name() const noexcept = 0;
     virtual constexpr ExtendedOpcode get_extended_opcode() const noexcept = 0;
 
-    virtual ExecStatus execute(RviState* state, const Operands& operands) = 0;
+    virtual ExecStatus execute(RviState* state, const Operands& operands) const = 0;
 
     virtual ~Instruction() {}
 };
@@ -29,7 +29,7 @@ struct SimpleInstruction: Instruction {
         return Oper::ext_opcode;
     }
 
-    ExecStatus execute(RviState* state, const Operands& operands) override {
+    ExecStatus execute(RviState* state, const Operands& operands) const override {
         ExecStatus status = Oper::execute(ValuesGetters::get_val(*state, operands)...);
 
         if (status == ExecStatus::SUCCESS)
@@ -49,7 +49,7 @@ struct UnimplementedInstruction: Instruction {
         return Oper::ext_opcode;
     }
 
-    ExecStatus execute(RviState*, const Operands&) override {
+    ExecStatus execute(RviState*, const Operands&) const override {
         using namespace std::literals;
 
         throw std::runtime_error("Instruction \""s + std::string(Oper::name) + "\" is not implemented"s);

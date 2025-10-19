@@ -17,7 +17,7 @@ struct StoreInstruction: Instruction {
         return Oper::ext_opcode;
     }
 
-    ExecStatus execute(RviState* state, const Operands& operands) override {
+    ExecStatus execute(RviState* state, const Operands& operands) const override {
         Address base = RegValGetter<Operands::RS1  >::get_val(*state, operands);
         Immediate offset = ImmValGetter<Operands::IMM_S>::get_val(*state, operands);
 

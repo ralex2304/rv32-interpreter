@@ -17,7 +17,7 @@ struct LoadInstruction: Instruction {
         return Oper::ext_opcode;
     }
 
-    ExecStatus execute(RviState* state, const Operands& operands) override {
+    ExecStatus execute(RviState* state, const Operands& operands) const override {
         Address base   = RegValGetter<Operands::RS1  >::get_val(*state, operands);
         Address offset = ImmValGetter<Operands::IMM_I>::get_val(*state, operands);
 

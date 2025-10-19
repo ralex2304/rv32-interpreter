@@ -1,5 +1,6 @@
 #pragma once
 
+#include "rvi_datatypes.h"
 #include "rvi_opcodes.h"
 #include "rvi_operands.h"
 #include "rvi_instructions.h"
@@ -18,12 +19,12 @@ struct JalInstruction: Instruction {
         return Oper::ext_opcode;
     }
 
-    ExecStatus execute(RviState* state, const Operands& operands) override {
+    ExecStatus execute(RviState* state, const Operands& operands) const override {
         Address next_pc = state->pc.get_next();
 
         ExecStatus res = state->pc.set(Oper::new_pc(ValuesGetters::get_val(*state, operands)...));
 
-        state->regs.set(RegValGetter<Operands::RD>::get_val(*state, operands), next_pc);
+        state->regs.set(operands.get<RegisterNum, Operands::RD>(), next_pc);
 
         return res;
     };
@@ -41,7 +42,7 @@ using Jal = JalInstruction<OperJal, PCValGetter, ImmValGetter<Operands::IMM_J>>;
 
 struct OperJalr {
     static constexpr const char* name = "jalr";
-    static constexpr ExtendedOpcode ext_opcode = {PlainOpcodes::JALR, 0, 0};
+    static constexpr ExtendedOpcode ext_opcode = {PlainOpcodes::JALR, 0b000, 0};
 
     static Address new_pc(UnsignValue rs1, UnsignValue offset) {
         return (rs1 + offset) & ~1u;

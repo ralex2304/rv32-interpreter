@@ -3,6 +3,7 @@
 #include "rvi_datatypes.h"
 
 #include <cstddef>
+#include <cstdint>
 #include <cstring>
 #include <vector>
 
@@ -23,6 +24,19 @@ class Memory {
         T set(Address address, T value) {
             std::memcpy(&memory_[address], &value, sizeof(T));
             return value;
+        }
+
+        void memcpy(Address dest, const void* src, size_t n) {
+            const uint8_t* src_ptr = reinterpret_cast<const uint8_t*>(src);
+            while (n-- != 0) {
+                set<uint8_t>(dest++, *(src_ptr++));
+            }
+        }
+
+        void memset(Address addr, int val, size_t n) {
+            while (n-- != 0) {
+                set<uint8_t>(addr++, static_cast<uint8_t>(val));
+            }
         }
 
     private:

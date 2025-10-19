@@ -17,7 +17,7 @@ struct BranchInstruction: Instruction {
         return Oper::ext_opcode;
     }
 
-    ExecStatus execute(RviState* state, const Operands& operands) override {
+    ExecStatus execute(RviState* state, const Operands& operands) const override {
         if (Oper::compare(RegValGetter<Operands::RS1>::get_val(*state, operands),
                           RegValGetter<Operands::RS2>::get_val(*state, operands))) {
             return state->pc.set(state->pc.get() + ImmValGetter<Operands::IMM_B>::get_val(*state, operands));

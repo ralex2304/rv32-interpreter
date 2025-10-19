@@ -4,6 +4,7 @@
 #include "rvi_instructions.h"
 #include "rvi_opcodes.h"
 
+#include <iostream>
 #include <memory>
 #include <stdexcept>
 #include <unordered_map>
@@ -13,11 +14,14 @@ namespace rvi {
 class InstructionRegistry {
     public:
         void add_instruction(std::unique_ptr<Instruction> instruction) {
+            using namespace std::literals;
+
             auto ext_opcode = instruction->get_extended_opcode();
+            auto instr_name = instruction->get_name();
 
             auto [it, inserted] = registry_.emplace(ext_opcode, std::move(instruction));
             if (!inserted)
-                throw std::runtime_error("Error adding opcode: already exist");
+                throw std::runtime_error("Error adding instruction \""s + std::string(instr_name) + "\": already exist"s);
         }
 
         const Instruction* get_instruction(RawInstruction raw_instruction) const {

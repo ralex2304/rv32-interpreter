@@ -46,16 +46,16 @@ class ExtendedOpcode {
 class ExtendedOpcodesFactory {
     public:
         inline ExtendedOpcodesFactory(RawInstruction raw_instr) noexcept
-            : ext_opcodes_({ExtendedOpcode(decode_plain_opcode_(raw_instr), 0, 0),
-
-                            ExtendedOpcode(decode_plain_opcode_(raw_instr),
-                                           decode_funct3_(raw_instr), 0),
+            : ext_opcodes_({ExtendedOpcode(raw_instr),
 
                             ExtendedOpcode(decode_plain_opcode_(raw_instr),
                                            decode_funct3_(raw_instr),
                                            decode_funct7_(raw_instr)),
 
-                            ExtendedOpcode(raw_instr)}) {}
+                            ExtendedOpcode(decode_plain_opcode_(raw_instr),
+                                           decode_funct3_(raw_instr), 0),
+
+                            ExtendedOpcode(decode_plain_opcode_(raw_instr), 0, 0)}) {}
 
         inline auto begin() const noexcept { return ext_opcodes_.cbegin(); }
         inline auto end()   const noexcept { return ext_opcodes_.cend(); }

@@ -61,7 +61,7 @@ ExecStatus RviState::syscall() {
     }
 }
 
-void RviState::load_elf_(const std::filesystem::path elf_path) {
+void RviState::load_elf(const std::filesystem::path elf_path) {
     ElfLoader elf(elf_path);
 
     elf.load_to_memory(mem);
@@ -69,7 +69,7 @@ void RviState::load_elf_(const std::filesystem::path elf_path) {
     pc.set(elf.get_entry_pc());
 }
 
-void RviState::init_execution_environment_(const std::vector<std::string_view> argv) {
+void RviState::init_execution_environment(const std::vector<std::string_view> argv) {
     UnsignValue argc = static_cast<UnsignValue>(argv.size());
 
     Address sp = static_cast<Address>(0 - (PAGE_SIZE * 4));
@@ -84,9 +84,10 @@ void RviState::init_execution_environment_(const std::vector<std::string_view> a
         mem.set<Address>(sp, argv_string_addr);
         sp += sizeof(Address);
 
-        for (Address i = 0; i <= arg.size(); i++) { // TODO: mem.cpy
-            mem.set(argv_string_addr + i, arg[i]);
-        }
+        mem.memcpy(argv_string_addr, arg.data(), arg.size());
+
+        mem.set<uint8_t>(argv_string_addr + static_cast<Address>(arg.size()), 0);
+
         argv_string_addr += static_cast<Address>(arg.size()) + 1;
     }
 
