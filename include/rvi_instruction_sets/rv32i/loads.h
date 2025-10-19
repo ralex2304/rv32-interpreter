@@ -42,35 +42,40 @@ namespace rv32i {
 
 struct OperLb {
     static constexpr const char* name = "lb";
-    static constexpr ExtendedOpcode ext_opcode = {PlainOpcodes::LOAD, 0b000, 0};
+    static constexpr ExtendedOpcode ext_opcode = {{PlainOpcodes::LOAD, 0b000, 0},
+                                                  ExtendedOpcodeType::OPCODE_FUNCT_3};
     using ReadT = int8_t;
 };
 using Lb = LoadInstruction<OperLb>;
 
 struct OperLh {
     static constexpr const char* name = "lh";
-    static constexpr ExtendedOpcode ext_opcode = {PlainOpcodes::LOAD, 0b001, 0};
+    static constexpr ExtendedOpcode ext_opcode = {{PlainOpcodes::LOAD, 0b001, 0},
+                                                  ExtendedOpcodeType::OPCODE_FUNCT_3};
     using ReadT = int16_t;
 };
 using Lh = LoadInstruction<OperLh>;
 
 struct OperLw {
     static constexpr const char* name = "lw";
-    static constexpr ExtendedOpcode ext_opcode = {PlainOpcodes::LOAD, 0b010, 0};
+    static constexpr ExtendedOpcode ext_opcode = {{PlainOpcodes::LOAD, 0b010, 0},
+                                                  ExtendedOpcodeType::OPCODE_FUNCT_3};
     using ReadT = int32_t;
 };
 using Lw = LoadInstruction<OperLw>;
 
 struct OperLbu {
     static constexpr const char* name = "lbu";
-    static constexpr ExtendedOpcode ext_opcode = {PlainOpcodes::LOAD, 0b100, 0};
+    static constexpr ExtendedOpcode ext_opcode = {{PlainOpcodes::LOAD, 0b100, 0},
+                                                  ExtendedOpcodeType::OPCODE_FUNCT_3};
     using ReadT = uint8_t;
 };
 using Lbu = LoadInstruction<OperLbu>;
 
 struct OperLhu {
     static constexpr const char* name = "lhu";
-    static constexpr ExtendedOpcode ext_opcode = {PlainOpcodes::LOAD, 0b101, 0};
+    static constexpr ExtendedOpcode ext_opcode = {{PlainOpcodes::LOAD, 0b101, 0},
+                                                  ExtendedOpcodeType::OPCODE_FUNCT_3};
     using ReadT = uint16_t;
 };
 using Lhu = LoadInstruction<OperLhu>;

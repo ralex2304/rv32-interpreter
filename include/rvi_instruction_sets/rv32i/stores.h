@@ -33,21 +33,24 @@ struct StoreInstruction: Instruction {
 
 struct OperSb {
     static constexpr const char* name = "sb";
-    static constexpr ExtendedOpcode ext_opcode = {PlainOpcodes::STORE, 0b000, 0};
+    static constexpr ExtendedOpcode ext_opcode = {{PlainOpcodes::STORE, 0b000, 0},
+                                                  ExtendedOpcodeType::OPCODE_FUNCT_3};
     using WriteT = uint8_t;
 };
 using Sb = StoreInstruction<OperSb>;
 
 struct OperSh {
     static constexpr const char* name = "sh";
-    static constexpr ExtendedOpcode ext_opcode = {PlainOpcodes::STORE, 0b001, 0};
+    static constexpr ExtendedOpcode ext_opcode = {{PlainOpcodes::STORE, 0b001, 0},
+                                                  ExtendedOpcodeType::OPCODE_FUNCT_3};
     using WriteT = uint16_t;
 };
 using Sh = StoreInstruction<OperSh>;
 
 struct OperSw {
     static constexpr const char* name = "sw";
-    static constexpr ExtendedOpcode ext_opcode = {PlainOpcodes::STORE, 0b010, 0};
+    static constexpr ExtendedOpcode ext_opcode = {{PlainOpcodes::STORE, 0b010, 0},
+                                                  ExtendedOpcodeType::OPCODE_FUNCT_3};
     using WriteT = uint32_t;
 };
 using Sw = StoreInstruction<OperSw>;

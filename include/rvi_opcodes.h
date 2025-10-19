@@ -25,12 +25,12 @@ enum class PlainOpcodes: uint8_t {
     SYSTEM   = 0b11'100'11,
 };
 
-class ExtendedOpcode {
+class ExtendedOpcodeValue {
     public:
-        constexpr ExtendedOpcode(RawInstruction full_instruction)
+        constexpr ExtendedOpcodeValue(RawInstruction full_instruction)
             : value_(full_instruction) {}
 
-        constexpr ExtendedOpcode(PlainOpcodes plain_opcode, uint8_t funct3, uint8_t funct7)
+        constexpr ExtendedOpcodeValue(PlainOpcodes plain_opcode, uint8_t funct3, uint8_t funct7)
             : value_(static_cast<RawInstruction>(plain_opcode) |
                      static_cast<RawInstruction>(funct3 << 12) |
                      static_cast<RawInstruction>(funct7 << 25)) {}
@@ -43,26 +43,39 @@ class ExtendedOpcode {
         const RawInstruction value_;
 };
 
+enum class ExtendedOpcodeType {
+    OPCODE           = 0,
+    OPCODE_FUNCT_3   = 1,
+    OPCODE_FUNCT_3_7 = 2,
+    RAW_INSTR        = 3,
+
+    TYPES_NUMBER
+};
+constexpr size_t EXTENDED_OPCODES_TYPES = static_cast<int>(ExtendedOpcodeType::TYPES_NUMBER);
+
+using ExtendedOpcode = std::pair<ExtendedOpcodeValue, ExtendedOpcodeType>;
+
 class ExtendedOpcodesFactory {
     public:
         inline ExtendedOpcodesFactory(RawInstruction raw_instr) noexcept
-            : ext_opcodes_({ExtendedOpcode(raw_instr),
+            : ext_opcodes_({ExtendedOpcodeValue(decode_plain_opcode_(raw_instr), 0, 0),
 
-                            ExtendedOpcode(decode_plain_opcode_(raw_instr),
-                                           decode_funct3_(raw_instr),
-                                           decode_funct7_(raw_instr)),
+                            ExtendedOpcodeValue(decode_plain_opcode_(raw_instr),
+                                                decode_funct3_(raw_instr), 0),
 
-                            ExtendedOpcode(decode_plain_opcode_(raw_instr),
-                                           decode_funct3_(raw_instr), 0),
+                            ExtendedOpcodeValue(decode_plain_opcode_(raw_instr),
+                                                decode_funct3_(raw_instr),
+                                                decode_funct7_(raw_instr)),
 
-                            ExtendedOpcode(decode_plain_opcode_(raw_instr), 0, 0)}) {}
+                            ExtendedOpcodeValue(raw_instr)}) {}
+
 
         inline auto begin() const noexcept { return ext_opcodes_.cbegin(); }
         inline auto end()   const noexcept { return ext_opcodes_.cend(); }
         constexpr size_t size() const noexcept { return ext_opcodes_.size(); }
 
     private:
-        const std::array<ExtendedOpcode, 4> ext_opcodes_;
+        const std::array<ExtendedOpcodeValue, EXTENDED_OPCODES_TYPES> ext_opcodes_;
 
         static inline PlainOpcodes decode_plain_opcode_(RawInstruction raw_instr) noexcept {
             return static_cast<PlainOpcodes>(get_instr_field<uint8_t, 0, 7>(raw_instr));

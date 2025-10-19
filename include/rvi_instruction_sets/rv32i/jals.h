@@ -32,7 +32,8 @@ struct JalInstruction: Instruction {
 
 struct OperJal {
     static constexpr const char* name = "jal";
-    static constexpr ExtendedOpcode ext_opcode = {PlainOpcodes::JAL, 0, 0};
+    static constexpr ExtendedOpcode ext_opcode = {{PlainOpcodes::JAL, 0, 0},
+                                                  ExtendedOpcodeType::OPCODE};
 
     static Address new_pc(Address pc, UnsignValue offset) {
         return pc + static_cast<Address>(offset);
@@ -42,7 +43,8 @@ using Jal = JalInstruction<OperJal, PCValGetter, ImmValGetter<Operands::IMM_J>>;
 
 struct OperJalr {
     static constexpr const char* name = "jalr";
-    static constexpr ExtendedOpcode ext_opcode = {PlainOpcodes::JALR, 0b000, 0};
+    static constexpr ExtendedOpcode ext_opcode = {{PlainOpcodes::JALR, 0b000, 0},
+                                                  ExtendedOpcodeType::OPCODE_FUNCT_3};
 
     static Address new_pc(UnsignValue rs1, UnsignValue offset) {
         return (rs1 + offset) & ~1u;
