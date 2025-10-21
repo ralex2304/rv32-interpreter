@@ -1,5 +1,6 @@
 #pragma once
 
+#include <bit>
 #include <cassert>
 #include <cstdint>
 
@@ -9,7 +10,7 @@ template <typename T, uint8_t width>
 inline constexpr T get_mask() {
     static_assert(width <= sizeof(T) * 8);
 
-    return (static_cast<T>(1) << width) - 1;
+    return (std::bit_cast<T>(1) << width) - 1;
 }
 
 template <typename OUT_T, typename IN_T, uint8_t offset, uint8_t width>

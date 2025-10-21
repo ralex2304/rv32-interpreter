@@ -5,6 +5,8 @@
 #include "rvi_opcodes.h"
 #include "rvi_operands.h"
 
+#include <bit>
+
 namespace rvi {
 
 namespace rv32i {
@@ -67,7 +69,7 @@ struct OperSlti {
                                                   ExtendedOpcodeType::OPCODE_FUNCT_3};
 
     static UnsignValue evaluate(UnsignValue rs1, UnsignValue imm) noexcept {
-        return (static_cast<SignValue>(rs1) < static_cast<SignValue>(imm)) ? 1 : 0;
+        return (std::bit_cast<SignValue>(rs1) < std::bit_cast<SignValue>(imm)) ? 1 : 0;
     }
 };
 using Slti = ArithmInstruction<OperSlti, RegValGetter<Operands::RS1>, ImmValGetter<Operands::IMM_I>>;
@@ -144,7 +146,7 @@ struct OperSrai {
                                                   ExtendedOpcodeType::OPCODE_FUNCT_3_7};
 
     static UnsignValue evaluate(UnsignValue rs1, UnsignValue shamt) noexcept {
-        return static_cast<UnsignValue>(static_cast<SignValue>(rs1) >> shamt);
+        return std::bit_cast<UnsignValue>(std::bit_cast<SignValue>(rs1) >> shamt);
     }
 };
 using Srai = ArithmInstruction<OperSrai, RegValGetter<Operands::RS1>, ImmValGetter<Operands::IMM_I>>;
@@ -188,7 +190,7 @@ struct OperSlt {
                                                   ExtendedOpcodeType::OPCODE_FUNCT_3_7};
 
     static UnsignValue evaluate(UnsignValue rs1, UnsignValue rs2) noexcept {
-        return (static_cast<SignValue>(rs1) < static_cast<SignValue>(rs2)) ? 1 : 0;
+        return (std::bit_cast<SignValue>(rs1) < std::bit_cast<SignValue>(rs2)) ? 1 : 0;
     }
 };
 using Slt = ArithmInstruction<OperSlt, RegValGetter<Operands::RS1>, RegValGetter<Operands::RS2>>;
@@ -232,7 +234,7 @@ struct OperSra {
                                                   ExtendedOpcodeType::OPCODE_FUNCT_3_7};
 
     static UnsignValue evaluate(UnsignValue rs1, UnsignValue rs2) noexcept {
-        return static_cast<UnsignValue>(static_cast<SignValue>(rs1) >> (rs2 & 0x1F));
+        return std::bit_cast<UnsignValue>(std::bit_cast<SignValue>(rs1) >> (rs2 & 0x1F));
     }
 };
 using Sra = ArithmInstruction<OperSra, RegValGetter<Operands::RS1>, RegValGetter<Operands::RS2>>;

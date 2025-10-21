@@ -5,6 +5,8 @@
 #include "rvi_operands.h"
 #include "rvi_instructions.h"
 
+#include <bit>
+
 namespace rvi {
 
 namespace rv32i {
@@ -36,7 +38,7 @@ struct OperJal {
                                                   ExtendedOpcodeType::OPCODE};
 
     static Address new_pc(Address pc, UnsignValue offset) {
-        return pc + static_cast<Address>(offset);
+        return pc + std::bit_cast<Address>(offset);
     }
 };
 using Jal = JalInstruction<OperJal, PCValGetter, ImmValGetter<Operands::IMM_J>>;

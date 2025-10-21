@@ -3,6 +3,8 @@
 #include "rvi_opcodes.h"
 #include "rvi_instructions.h"
 
+#include <bit>
+
 namespace rvi {
 
 namespace rv32i {
@@ -56,7 +58,7 @@ struct OperBlt {
                                                   ExtendedOpcodeType::OPCODE_FUNCT_3};
 
     static bool compare(UnsignValue op1, UnsignValue op2) {
-        return static_cast<SignValue>(op1) < static_cast<SignValue>(op2);
+        return std::bit_cast<SignValue>(op1) < std::bit_cast<SignValue>(op2);
     }
 };
 using Blt = BranchInstruction<OperBlt>;
@@ -67,7 +69,7 @@ struct OperBge {
                                                   ExtendedOpcodeType::OPCODE_FUNCT_3};
 
     static bool compare(UnsignValue op1, UnsignValue op2) {
-        return static_cast<SignValue>(op1) >= static_cast<SignValue>(op2);
+        return std::bit_cast<SignValue>(op1) >= std::bit_cast<SignValue>(op2);
     }
 };
 using Bge = BranchInstruction<OperBge>;

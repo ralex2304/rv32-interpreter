@@ -3,6 +3,7 @@
 #include "rvi_instructions.h"
 #include "rvi_opcodes.h"
 
+#include <bit>
 #include <type_traits>
 
 namespace rvi {
@@ -28,7 +29,7 @@ struct LoadInstruction: Instruction {
         if constexpr (std::is_signed_v<typename Oper::ReadT>) {
             SignValue sign_value = static_cast<SignValue>(value);
 
-            state->regs.set(rd, static_cast<UnsignValue>(sign_value));
+            state->regs.set(rd, std::bit_cast<UnsignValue>(sign_value));
         } else {
             state->regs.set(rd, static_cast<UnsignValue>(value));
         }

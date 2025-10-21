@@ -3,8 +3,8 @@
 #include "rvi_datatypes.h"
 #include "rvi_elf.h"
 #include "rvi_logger.h"
-#include "rvi_operands.h"
 
+#include <bit>
 #include <cassert>
 #include <cstdint>
 #include <filesystem>
@@ -116,11 +116,11 @@ ExecStatus RviState::syscall() {
 
     switch (static_cast<Syscalls_>(syscall_num)) {
         case Syscalls_::READ:
-            regs.set(RET_VAL, sys_read_(static_cast<SignValue>(regs.get(ARG1)),
+            regs.set(RET_VAL, sys_read_(std::bit_cast<SignValue>(regs.get(ARG1)),
                                         regs.get(ARG2), regs.get(ARG3)));
             return ExecStatus::SUCCESS;
         case Syscalls_::WRITE:
-            regs.set(RET_VAL, sys_write_(static_cast<SignValue>(regs.get(ARG1)),
+            regs.set(RET_VAL, sys_write_(std::bit_cast<SignValue>(regs.get(ARG1)),
                                          regs.get(ARG2), regs.get(ARG3)));
             return ExecStatus::SUCCESS;
         case Syscalls_::EXIT:

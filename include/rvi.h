@@ -3,6 +3,7 @@
 #include "rvi_datatypes.h"
 #include "rvi_instruction_registry.h"
 
+#include <bit>
 #include <filesystem>
 #include <vector>
 
@@ -15,7 +16,7 @@ class Rvi {
         void run();
 
         int get_exit_code() const {
-            int ret_code = static_cast<int>(state_.regs.get(10));
+            int ret_code = std::bit_cast<int>(state_.regs.get(10));
             LOG_F(INFO, "Return code %d", ret_code);
             return ret_code;
         }
