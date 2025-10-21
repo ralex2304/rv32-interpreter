@@ -11,6 +11,7 @@ include(cmake/third_party.cmake)
 add_executable(${PROJECT_NAME}
     ${CMAKE_CURRENT_SOURCE_DIR}/src/main.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/rvi.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/rvi_arg_parser.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/rvi_elf.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/rvi_state.cpp
 )
@@ -21,5 +22,5 @@ if (LOGGING)
     add_compile_definitions(LOGGING)
 endif()
 
-target_link_libraries(${PROJECT_NAME} PRIVATE rvi-defaults magic_enum::magic_enum loguru::loguru)
+target_link_libraries(${PROJECT_NAME} PRIVATE rvi-defaults magic_enum::magic_enum loguru::loguru cxxopts::cxxopts)
 

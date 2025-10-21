@@ -4,19 +4,20 @@
 #include "rvi_instruction_registry.h"
 
 #include <filesystem>
-#include <string_view>
 #include <vector>
 
 namespace rvi {
 
 class Rvi {
     public:
-        Rvi(const std::filesystem::path elf_path, const std::vector<std::string_view>& args);
+        Rvi(const std::filesystem::path elf_path, const std::vector<std::string>& args);
 
         void run();
 
         int get_exit_code() const {
-            return static_cast<int>(state_.regs.get(10));
+            int ret_code = static_cast<int>(state_.regs.get(10));
+            LOG_F(INFO, "Return code %d", ret_code);
+            return ret_code;
         }
 
     private:

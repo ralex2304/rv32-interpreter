@@ -6,7 +6,7 @@
 #include <array>
 #include <cstddef>
 #include <cstdint>
-#include <magic_enum/magic_enum.hpp>
+#include "magic_enum_adapter.h"
 
 namespace rvi {
 

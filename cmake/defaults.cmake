@@ -1,6 +1,6 @@
 add_library(rvi-defaults INTERFACE)
 
-target_compile_features(rvi-defaults INTERFACE cxx_std_20)
+target_compile_features(rvi-defaults INTERFACE cxx_std_23)
 
 target_compile_options(rvi-defaults
     INTERFACE
@@ -15,7 +15,6 @@ target_compile_options(rvi-defaults
         -Woverloaded-virtual
         -Wnon-virtual-dtor
         -Wno-missing-field-initializers
-        -Wlogical-op
         -Wignored-qualifiers
         -Wformat=2
         -Wformat-security
@@ -23,7 +22,6 @@ target_compile_options(rvi-defaults
         -Wctor-dtor-privacy
         -Wconversion
         -Wcast-qual
-        -Wuseless-cast
         -Wno-narrowing
         -Wno-old-style-cast
         -Wmain
@@ -42,7 +40,7 @@ target_compile_options(rvi-defaults
         -fstack-protector-strong
         -fcheck-new
         -fstrict-overflow
-        -fpermissive
+        -pedantic
 
         $<$<CONFIG:Debug>:
             -Og

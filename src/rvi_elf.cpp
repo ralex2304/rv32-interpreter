@@ -1,5 +1,7 @@
 #include "rvi_elf.h"
 
+#include "rvi_logger.h"
+
 #include <cerrno>
 #include <cstddef>
 #include <cstring>
@@ -14,7 +16,7 @@
 using namespace rvi;
 using namespace std::literals;
 
-MmapFile::MmapFile(const std::filesystem::path path) {
+MmapFile::MmapFile(const std::filesystem::path& path) {
     fd_ = open(path.c_str(), O_RDONLY);
     if (fd_ == -1)
         throw std::runtime_error("Can't open file \""s + path.string() + "\": "s +
@@ -40,7 +42,7 @@ MmapFile::~MmapFile() {
     close(fd_);
 }
 
-ElfLoader::ElfLoader(const std::filesystem::path elf_path)
+ElfLoader::ElfLoader(const std::filesystem::path& elf_path)
     : file_(elf_path) {
 
     if (file_.size < sizeof(Elf32_Ehdr))
@@ -59,12 +61,15 @@ ElfLoader::ElfLoader(const std::filesystem::path elf_path)
         throw std::runtime_error("Corrupted ELF file: too small for section header table");
 
     sect_header_table_ = reinterpret_cast<Elf32_Shdr*>(file_.data + elf_header_->e_shoff);
+
+    LOG_F(DUMP, "Elf header parsed and verified");
 }
 
 void ElfLoader::load_to_memory(Memory& memory) const {
     Elf32_Phdr* p_hdr = prog_header_table_;
     for (size_t i = 0; i < elf_header_->e_phnum; i++, p_hdr++) {
         if (p_hdr->p_type == PT_LOAD) {
+            LOG_F(DUMP, "Loading PT_LOAD program header. Address 0x%x", p_hdr->p_vaddr);
 
             memory.memcpy(p_hdr->p_vaddr, file_.data + p_hdr->p_offset, p_hdr->p_filesz);
 

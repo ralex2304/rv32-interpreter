@@ -11,7 +11,7 @@ namespace rvi {
 
 class MmapFile {
     public:
-        MmapFile(const std::filesystem::path path);
+        MmapFile(const std::filesystem::path& path);
         ~MmapFile();
 
         std::byte* data;
@@ -23,7 +23,7 @@ class MmapFile {
 
 class ElfLoader {
     public:
-        ElfLoader(const std::filesystem::path elf_path);
+        ElfLoader(const std::filesystem::path& elf_path);
 
         void load_to_memory(Memory& memory) const;
 

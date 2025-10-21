@@ -2,14 +2,14 @@
 
 #include "rvi_datatypes.h"
 #include "rvi_elf.h"
+#include "rvi_logger.h"
 #include "rvi_operands.h"
 
 #include <cassert>
 #include <cstdint>
 #include <filesystem>
 #include <format>
-#include <ranges>
-#include <span>
+#include "magic_enum_adapter.h"
 #include <stdexcept>
 #include <sys/types.h>
 #include <unistd.h>
@@ -41,39 +41,51 @@ void RegisterFile::dump() const {
     std::string str = "00: zzzzzzzz";
 
     for (size_t i = 1; i < 32; i++) {
-        str += std::format(" {:8x}", regs_[i]);
+        str += std::format(" {:8x}", get(i));
 
         if (i % 8 == 7) {
-            LOG_F(INFO, "%s", str.c_str());
+            LOG_F(DUMP, "%s", str.c_str());
             str = std::format("{:02}:", i+1);
         }
     }
 }
 
-void RviState::load_elf(const std::filesystem::path elf_path) {
+void RviState::load_elf(const std::filesystem::path& elf_path) {
+    LOG_SCOPE_F(DUMP, "Loading elf: %s", elf_path.c_str());
+
     ElfLoader elf(elf_path);
 
     elf.load_to_memory(mem);
 
+    LOG_F(INFO, "Entry PC: 0x%x", elf.get_entry_pc());
+
     pc.set(elf.get_entry_pc());
 }
 
-void RviState::init_execution_environment(const std::vector<std::string_view> argv) {
+void RviState::init_execution_environment(const std::vector<std::string>& argv) {
+    LOG_SCOPE_F(INFO, "Initializing execution environment");
+
     UnsignValue argc = static_cast<UnsignValue>(argv.size());
 
     Address sp = static_cast<Address>(0 - (PAGE_SIZE * 4));
     regs.set(SP, sp);
+    LOG_F(INFO, "SP: 0x%x", sp);
+
+    LOG_F(INFO, "argc = %u", argc);
 
     mem.set<UnsignValue>(sp, argc);
     sp += sizeof(UnsignValue);
 
     Address argv_string_addr = sp + static_cast<Address>((argc + 1) * sizeof(Address));
 
+    size_t argv_i = 0;
     for (auto arg: argv) {
+        LOG_F(INFO, "argv[%zu] = \"%s\"", argv_i++, arg.c_str());
+
         mem.set<Address>(sp, argv_string_addr);
         sp += sizeof(Address);
 
-        mem.memcpy(argv_string_addr, arg.data(), arg.size());
+        mem.memcpy(argv_string_addr, arg.c_str(), arg.size());
 
         mem.set<uint8_t>(argv_string_addr + static_cast<Address>(arg.size()), 0);
 
@@ -96,7 +108,13 @@ ExecStatus RviState::syscall() {
         SYSCALL_NUMBER = A7,
     };
 
-    switch (static_cast<Syscalls_>(regs.get(SYSCALL_NUMBER))) {
+    UnsignValue syscall_num = regs.get(SYSCALL_NUMBER);
+
+    LOG_SCOPE_F(INFO, "Syscall: %s = %u", magic_enum::enum_name(
+                                                static_cast<Syscalls_>(syscall_num)).data(),
+                                          syscall_num);
+
+    switch (static_cast<Syscalls_>(syscall_num)) {
         case Syscalls_::READ:
             regs.set(RET_VAL, sys_read_(static_cast<SignValue>(regs.get(ARG1)),
                                         regs.get(ARG2), regs.get(ARG3)));

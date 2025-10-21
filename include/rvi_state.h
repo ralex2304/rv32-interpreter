@@ -72,9 +72,9 @@ class RviState {
 
         Memory mem = {};
 
-        void load_elf(const std::filesystem::path elf_path);
+        void load_elf(const std::filesystem::path& elf_path);
 
-        void init_execution_environment(const std::vector<std::string_view> argv);
+        void init_execution_environment(const std::vector<std::string>& argv);
 
         ExecStatus syscall();
 

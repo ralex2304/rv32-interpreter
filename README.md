@@ -44,13 +44,29 @@ cmake --build .
 
 ## Usage
 
+Simple mode (without interpreter arguments):
+
 ```bash
 ./build/rv32-interpreter <path-to-rv32-elf> <target-program-arguments...>
-```
-
-E.g:
-
-```bash
+===
 ./build/rv32-interpreter factorial 5
 ```
 
+Complex mode (with interpreter arguments)
+
+```bash
+./build/rv32-interpreter <flags> -- <path-to-rv32-elf> <target-program-arguments...>
+===
+./build/rv32-interpreter -v INFO --log=log.dump -- factorial 5
+```
+
+### Arguments
+
+```
+-v, --verbosity arg  stderr messages verbosity: FATAL, ERROR, WARNING,
+                     INFO, DUMP (default: ERROR)
+-l, --log arg        Create log file. You can specify verbosity as
+                     filename extension (default: DUMP). E.g log.error
+-h, --help           Print help
+
+```

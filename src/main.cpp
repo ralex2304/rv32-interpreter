@@ -1,27 +1,21 @@
 #include "rvi.h"
+#include "rvi_arg_parser.h"
+#include "rvi_logger.h"
 
-#include <cstddef>
-#include <stdexcept>
-#include <string_view>
-#include <vector>
-
+#include <cxxopts.hpp>
 using namespace rvi;
 
 int main(const int argc, const char* argv[]) {
-    loguru::g_preamble_date = false;
-    loguru::g_preamble_time = false;
-    loguru::g_preamble_uptime = false;
-    loguru::g_preamble_thread = false;
-    loguru::g_preamble_file = false;
+    ArgParser arg_parser(argc, argv);
 
-    if (argc < 2)
-        throw std::runtime_error("ELF file must be given as first argument");
+    if (arg_parser.is_help())
+        return 0;
 
-    std::vector<std::string_view> arguments(static_cast<size_t>(argc - 2));
-    for (size_t i = 0; i < static_cast<size_t>(argc - 2); i++)
-        arguments.push_back(argv[static_cast<size_t>(argc - 2) + i]);
+    Logger logger(arg_parser.get_stderr_verbosity(), arg_parser.get_log_files());
 
-    Rvi interpreter(argv[1], arguments);
+    auto& target_arguments = arg_parser.get_target_arguments();
+
+    Rvi interpreter(target_arguments[0], target_arguments);
 
     interpreter.run();
 

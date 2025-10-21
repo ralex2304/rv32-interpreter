@@ -2,12 +2,11 @@
 
 #include "bit_utils.h"
 #include "rvi_datatypes.h"
+#include "rvi_logger.h"
 #include "rvi_state.h"
 
 #include <cstdint>
 #include <format>
-#include <loguru.hpp>
-#include <magic_enum/magic_enum.hpp>
 #include <sys/types.h>
 #include <variant>
 
@@ -57,6 +56,7 @@ class Operands {
 
         template <typename T, Fields field>
         constexpr T get() const noexcept {
+            static_assert(field < FIELDS_NUM);
             return std::get<T>(fields_[field]);
         }
 
@@ -71,7 +71,7 @@ class Operands {
             for (size_t i = IMM_I; i < FIELDS_NUM; i++)
                 log_str += std::format("{}: {:8x} ", fields_names[i], std::get<Immediate>(fields_[i]));
 
-            LOG_F(INFO, "%s", log_str.c_str());
+            LOG_F(DUMP, "%s", log_str.c_str());
         }
 
     private:
@@ -95,11 +95,10 @@ struct ImmValGetter {
                   field == Operands::SHAMT);
 
     static UnsignValue get_val(const RviState&, const Operands& operands) {
-        if constexpr (field == Operands::SHAMT) {
+        if constexpr (field == Operands::SHAMT)
             return operands.get<RegisterNum, Operands::RS2>();
-        }
-
-        return operands.get<Immediate, field>();
+        else 
+            return operands.get<Immediate, field>();
     }
 };
 
