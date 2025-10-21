@@ -1,0 +1,3 @@
+[submodule "tests/given_task/riscv-interpreter-task"]
+	path = tests/given_task/riscv-interpreter-task
+	url = git@gitlab.com:iDang3r/riscv-interpreter-task.git

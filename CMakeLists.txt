@@ -2,6 +2,8 @@ cmake_minimum_required(VERSION 3.16)
 
 project(rv32-interpreter LANGUAGES CXX)
 
+enable_testing()
+
 include(cmake/tools.cmake)
 
 include(cmake/defaults.cmake)
@@ -18,9 +20,7 @@ add_executable(${PROJECT_NAME}
 
 target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
 
-if (LOGGING)
-    add_compile_definitions(LOGGING)
-endif()
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/tests/given_task)
 
 target_link_libraries(${PROJECT_NAME} PRIVATE rvi-defaults magic_enum::magic_enum loguru::loguru cxxopts::cxxopts)
 
