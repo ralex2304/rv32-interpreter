@@ -14,32 +14,48 @@ TODO:
 - `RV32F` - single-precision floating-point
 - `RV32Zbb` - basic bit manipulation
 
-## Syscalls
+### Syscalls
 
 `ecall` instruction supports these Linux system calls:
 - `read` - `63`
 - `write` - `64`
 - `exit` - `93`
 
-### Build dependencies
+## Build dependencies
 
-- `C++ 20` compiler
+- `C++ 23` compiler
 - `CMake`
+
+## Test dependencies
+
+- `riscv64-unknown-elf` toolchain
+- `Python`
 
 ## Build
 
 ```bash
 cmake -S . -B <build_dir> -DCMAKE_BUILD_TYPE={Debug, Release} [-DUSE_SANITIZER='Address;Undefined']
-cd <build_dir>
-cmake --build .
+cmake --build build
 ```
 
 E.g:
 
 ```bash
-cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug
-cd build
-cmake --build .
+cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug -DUSE_SANITIZER='Address;Undefined'
+cmake --build build
+```
+
+Tests build
+
+```bash
+cd tests/end_to_end
+make <path_to_target_executable (source name without extension)>
+```
+
+E.g:
+
+```bash
+make rv32i/fibonacci/test
 ```
 
 ## Usage
@@ -49,10 +65,10 @@ Simple mode (without interpreter arguments):
 ```bash
 ./build/rv32-interpreter <path-to-rv32-elf> <target-program-arguments...>
 ===
-./build/rv32-interpreter factorial 5
+./build/rv32-interpreter tests/end_to_end/rv32i/fibonacci/test 5
 ```
 
-Complex mode (with interpreter arguments)
+Complex mode (with interpreter arguments):
 
 ```bash
 ./build/rv32-interpreter <flags> -- <path-to-rv32-elf> <target-program-arguments...>
@@ -70,3 +86,15 @@ Complex mode (with interpreter arguments)
 -h, --help           Print help
 
 ```
+## Tests
+
+Use CMake CTest to run tests
+
+```bash
+ctest --build-dir build
+```
+
+There are 2 test sets
+
+Tests supplied with the task are in [riscv-interpreter-task](https://gitlab.com/iDang3r/riscv-interpreter-task) submodule.
+
