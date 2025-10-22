@@ -20,7 +20,7 @@ add_executable(${PROJECT_NAME}
 
 target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
 
-add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/tests/given_task)
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/tests)
 
 target_link_libraries(${PROJECT_NAME} PRIVATE rvi-defaults magic_enum::magic_enum loguru::loguru cxxopts::cxxopts)
 
