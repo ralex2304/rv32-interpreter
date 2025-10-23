@@ -9,6 +9,8 @@ set(TASK_TEST_LIST
     exit_code_argv/runner.sh
     rv32i/test_add
     rv32i/test_sub
+    rv32imf_zbb/test_shift
+    rv32imf_zbb/test_andn
 )
 
 set(INTERPRETER ${CMAKE_BINARY_DIR}/${CMAKE_PROJECT_NAME})
@@ -42,8 +44,7 @@ add_test(
 )
 
 set_tests_properties(task_tests_setup PROPERTIES
-    FIXTURES_SETUP ${TASK_TEST_LIST}
-    FIXTURES_REQUIRED
+    FIXTURES_SETUP "${TASK_TEST_LIST}"
 )
 
 set(TASK_TEST_DIR ${CMAKE_CURRENT_SOURCE_DIR}/riscv-interpreter-task/bin)
