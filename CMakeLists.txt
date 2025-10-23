@@ -11,11 +11,11 @@ include(cmake/defaults.cmake)
 include(cmake/third_party.cmake)
 
 add_executable(${PROJECT_NAME}
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/main.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/rvi.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/rvi_arg_parser.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/rvi_elf.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/rvi_state.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/source/main.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/source/rvi.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/source/rvi_arg_parser.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/source/rvi_elf.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/source/rvi_state.cpp
 )
 
 target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
