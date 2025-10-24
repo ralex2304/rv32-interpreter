@@ -6,31 +6,34 @@
 
 namespace rvi {
 
-class Logger {
-    public:
-        enum Verbosity {
-            FATAL   = -3,
-            ERROR   = -2,
-            WARNING = -1,
-            INFO    =  0,
-            DUMP    =  1,
-        };
+struct Logger {
+    enum Verbosity {
+        FATAL   = -3,
+        ERROR   = -2,
+        WARNING = -1,
+        INFO    =  0,
+        DUMP    =  1,
+    };
 
-        static constexpr Verbosity DEFAULT_STDERR_VERBOSITY = ERROR;
+    static constexpr Verbosity DEFAULT_STDERR_VERBOSITY = ERROR;
 
-        Logger(Verbosity stderr_verbosity, const std::vector<std::pair<const std::string&,
-                                                                       Verbosity>>& log_files) {
-            loguru::g_preamble_date   = false;
-            loguru::g_preamble_time   = false;
-            loguru::g_preamble_uptime = false;
-            loguru::g_preamble_thread = false;
-            loguru::g_preamble_file   = false;
+    Logger() {
+        loguru::g_preamble_date   = false;
+        loguru::g_preamble_time   = false;
+        loguru::g_preamble_uptime = false;
+        loguru::g_preamble_thread = false;
+        loguru::g_preamble_file   = false;
+    }
 
-            loguru::g_stderr_verbosity = stderr_verbosity;
+    void set_stderr_verbosity(Verbosity stderr_verbosity) {
+        loguru::g_stderr_verbosity = stderr_verbosity;
+    }
 
-            for (auto file: log_files)
-                loguru::add_file(file.first.c_str(), loguru::FileMode::Truncate, file.second);
-        }
+    void add_log_files(const std::vector<std::pair<const std::string&, Verbosity>>& log_files) {
+        for (auto file: log_files)
+            loguru::add_file(file.first.c_str(), loguru::FileMode::Truncate, file.second);
+
+    }
 };
 
 } // namespace rvi

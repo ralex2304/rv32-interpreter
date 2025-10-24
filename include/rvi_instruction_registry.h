@@ -23,11 +23,11 @@ class InstructionRegistry {
 
             auto [it, inserted] = registries_.at(type).emplace(ext_opcode, std::move(instruction));
             if (!inserted)
-                throw std::runtime_error("Error adding instruction \""s + std::string(instr_name) +
-                                                                        "\": already exist"s);
+                throw exception("Error adding instruction \""s + std::string(instr_name) +
+                                "\": already exist"s);
         }
 
-        const Instruction* get_instruction(RawInstruction raw_instruction) const {
+        const Instruction* get_instruction(RawInstruction raw_instruction) const noexcept {
             ExtendedOpcodesFactory ext_opcodes_factory(raw_instruction);
 
             auto ext_opcode = ext_opcodes_factory.begin();
@@ -48,6 +48,10 @@ class InstructionRegistry {
 
             return nullptr;
         }
+
+        class exception: public std::runtime_error {
+            using std::runtime_error::runtime_error;
+        };
 
     private:
         std::array<std::unordered_map<RawInstruction, std::unique_ptr<Instruction>>,

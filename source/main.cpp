@@ -3,22 +3,39 @@
 #include "rvi_logger.h"
 
 #include <cxxopts.hpp>
+#include <iostream>
+
 using namespace rvi;
+using namespace std::literals;
 
 int main(const int argc, const char* argv[]) {
-    ArgParser arg_parser(argc, argv);
+    Logger logger;
 
-    if (arg_parser.is_help())
-        return 0;
+    try {
+        ArgParser arg_parser(argc, argv);
 
-    Logger logger(arg_parser.get_stderr_verbosity(), arg_parser.get_log_files());
+        if (arg_parser.is_help())
+            return 0;
 
-    auto& target_arguments = arg_parser.get_target_arguments();
+        logger.set_stderr_verbosity(arg_parser.get_stderr_verbosity());
+        logger.add_log_files(arg_parser.get_log_files());
 
-    Rvi interpreter(target_arguments[0], target_arguments);
+        auto& target_arguments = arg_parser.get_target_arguments();
 
-    interpreter.run();
+        Rvi interpreter(target_arguments[0], target_arguments);
 
-    return interpreter.get_exit_code();
+        interpreter.run();
+
+        return interpreter.get_exit_code();
+    } catch (const ArgParser::exception& e) {
+        LOG_F(ERROR, "%s", ("Invalid arguments given: "s + e.what()).c_str());
+        return -1;
+    } catch (const Rvi::execution_error& e) {
+        LOG_F(ERROR, "%s", ("Interpreter error: "s + e.what()).c_str());
+        return -2;
+    } catch (const Rvi::riscv_exception& e) {
+        LOG_F(ERROR, "%s", ("RISC-V exception occured: "s + e.what()).c_str());
+        return -3;
+    }
 }
 

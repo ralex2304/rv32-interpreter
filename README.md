@@ -45,19 +45,6 @@ cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug -DUSE_SANITIZER='Address;Undefined'
 cmake --build build
 ```
 
-Tests build
-
-```bash
-cd tests/end_to_end
-make <path_to_target_executable (source name without extension)>
-```
-
-E.g:
-
-```bash
-make rv32i/fibonacci/test
-```
-
 ## Usage
 
 Simple mode (without interpreter arguments):

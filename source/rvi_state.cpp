@@ -10,11 +10,11 @@
 #include <filesystem>
 #include <format>
 #include "magic_enum_adapter.h"
-#include <stdexcept>
 #include <sys/types.h>
 #include <unistd.h>
 
 using namespace rvi;
+using namespace std::literals;
 
 namespace {
 
@@ -53,13 +53,17 @@ void RegisterFile::dump() const {
 void RviState::load_elf(const std::filesystem::path& elf_path) {
     LOG_SCOPE_F(DUMP, "Loading elf: %s", elf_path.c_str());
 
-    ElfLoader elf(elf_path);
+    try {
+        ElfLoader elf(elf_path);
 
-    elf.load_to_memory(mem);
+        elf.load_to_memory(mem);
 
-    LOG_F(INFO, "Entry PC: 0x%x", elf.get_entry_pc());
+        LOG_F(INFO, "Entry PC: 0x%x", elf.get_entry_pc());
 
-    pc.set(elf.get_entry_pc());
+        pc.set(elf.get_entry_pc());
+    } catch (const ElfLoader::exception& e) {
+        throw exception("ELF loader error: "s + e.what());
+    }
 }
 
 void RviState::init_execution_environment(const std::vector<std::string>& argv) {
@@ -127,7 +131,7 @@ ExecStatus RviState::syscall() {
             return ExecStatus::EXIT;
 
         default:
-            throw std::runtime_error("Invalid syscall");
+            throw exception("Invalid syscall");
     }
 }
 

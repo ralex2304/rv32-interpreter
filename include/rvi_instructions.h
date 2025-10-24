@@ -17,6 +17,10 @@ struct Instruction {
     virtual ExecStatus execute(RviState* state, const Operands& operands) const = 0;
 
     virtual ~Instruction() {}
+
+    class execution_error: public std::runtime_error {
+        using std::runtime_error::runtime_error;
+    };
 };
 
 template <class Oper, class... ValuesGetters>
@@ -52,8 +56,8 @@ struct UnimplementedInstruction: Instruction {
     ExecStatus execute(RviState*, const Operands&) const override {
         using namespace std::literals;
 
-        throw std::runtime_error("Instruction \""s + std::string(Oper::name) +
-                                                    "\" is not implemented"s);
+        throw execution_error("Instruction \""s + std::string(Oper::name) +
+                              "\" is not implemented yet"s);
     }
 };
 

@@ -6,18 +6,16 @@
 #include <iostream>
 #include "magic_enum_adapter.h"
 #include <ranges>
-#include <stdexcept>
 #include <string>
 #include <string_view>
 #include <vector>
 
 using namespace rvi;
+using namespace std::literals;
 
 static void add_options_(cxxopts::Options& options);
 
 static void add_options_(cxxopts::Options& options) {
-     using namespace std::literals;
-
     std::string default_verb_name(magic_enum::enum_name(Logger::DEFAULT_STDERR_VERBOSITY));
 
     auto verb_names = magic_enum::enum_names<Logger::Verbosity>() | std::views::join_with(", "sv);
@@ -40,14 +38,18 @@ ArgParser::ArgParser(const int argc, const char* argv[]) {
     if (argc < 2 || argv[1][0] != '-') {
         options.allow_unrecognised_options();
 
-        result_ = options.parse(argc, argv);
+        result_ = options.parse(argc, argv); //< shouldn't throw exception
 
         return;
     }
 
     add_options_(options);
 
-    result_ = options.parse(argc, argv);
+    try {
+        result_ = options.parse(argc, argv);
+    } catch (const cxxopts::exceptions::parsing& e) {
+        throw exception(e.what());
+    }
 
     if (result_.count("help")) {
         std::cout << options.help() << std::endl;
@@ -82,20 +84,18 @@ const std::vector<std::string>& ArgParser::get_target_arguments() {
     const auto& args = result_.unmatched();
 
     if (args.size() == 0)
-        throw std::runtime_error("ELF file name is not specified");
+        throw exception("ELF file name is not specified");
 
     return args;
 }
 
 Logger::Verbosity ArgParser::parse_verbosity_name_(std::string name) {
-    using namespace std::literals;
-
     std::transform(name.begin(), name.end(), name.begin(), ::toupper);
 
     auto entry = magic_enum::enum_cast<Logger::Verbosity>(name);
 
     if (!entry.has_value())
-        throw std::runtime_error("Invalid verbosity level name given: "s + name);
+        throw exception("Invalid verbosity level name given: "s + name);
 
     return entry.value();
 }

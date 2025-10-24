@@ -3,21 +3,26 @@
 #include "rvi_datatypes.h"
 #include "rvi_instruction_registry.h"
 #include "rvi_instruction_sets/rv32i/rv32i.h"
+#include "rvi_instructions.h"
 #include "rvi_logger.h"
 #include "rvi_operands.h"
 
 #include <format>
-#include <stdexcept>
 #include <vector>
 
 using namespace rvi;
+using namespace std::literals;
 
 Rvi::Rvi(const std::filesystem::path elf_path, const std::vector<std::string>& args) {
     state_.load_elf(elf_path);
     state_.init_execution_environment(args);
 
-    LOG_F(INFO, "Registry: rv32i extension");
-    rv32i::add_instructions(registry_);
+    try {
+        LOG_F(INFO, "Registry: rv32i extension");
+        rv32i::add_instructions(registry_);
+    } catch (const InstructionRegistry::exception& e) {
+        throw execution_error("Instruction registry error: "s + e.what());
+    }
 }
 
 void Rvi::run() {
@@ -32,8 +37,8 @@ void Rvi::run() {
         if (status == ExecStatus::EXIT)
             break;
 
-        throw std::runtime_error(std::format("RISC-V exception occured (pc = 0x{:x}): {}",
-                                             state_.pc.get(), magic_enum::enum_name(status)));
+        throw riscv_exception(std::format("pc = 0x{:x} - {}", state_.pc.get(),
+                                          magic_enum::enum_name(status)));
     }
 
 }
@@ -53,6 +58,10 @@ ExecStatus Rvi::run_instruction_(const RawInstruction raw_instr) {
     LOG_F(INFO, "%s", instr->get_name());
     operands.dump();
 
-    return instr->execute(&state_, operands);
+    try {
+        return instr->execute(&state_, operands);
+    } catch (const Instruction::execution_error& e) {
+        throw execution_error("Instruction execution error: "s + e.what());
+    }
 }
 

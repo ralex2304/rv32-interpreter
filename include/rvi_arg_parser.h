@@ -3,6 +3,7 @@
 #include "rvi_logger.h"
 
 #include <cxxopts.hpp>
+#include <stdexcept>
 #include <string>
 #include <vector>
 
@@ -25,6 +26,10 @@ class ArgParser {
         }
 
         const std::vector<std::string>& get_target_arguments();
+
+        class exception: public std::runtime_error {
+            using std::runtime_error::runtime_error;
+        };
 
     private:
         cxxopts::ParseResult result_;

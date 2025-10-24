@@ -6,6 +6,7 @@
 #include <cstddef>
 #include <elf.h>
 #include <filesystem>
+#include <stdexcept>
 
 namespace rvi {
 
@@ -16,6 +17,10 @@ class MmapFile {
 
         std::byte* data;
         size_t size;
+
+        class exception: public std::runtime_error {
+            using std::runtime_error::runtime_error;
+        };
 
     private:
         int fd_;
@@ -28,6 +33,10 @@ class ElfLoader {
         void load_to_memory(Memory& memory) const;
 
         Address get_entry_pc() const;
+
+        class exception: public std::runtime_error {
+            using std::runtime_error::runtime_error;
+        };
 
     private:
         const MmapFile file_;

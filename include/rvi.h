@@ -5,6 +5,7 @@
 
 #include <bit>
 #include <filesystem>
+#include <stdexcept>
 #include <vector>
 
 namespace rvi {
@@ -20,6 +21,14 @@ class Rvi {
             LOG_F(INFO, "Return code %d", ret_code);
             return ret_code;
         }
+
+        class execution_error: public std::runtime_error {
+            using std::runtime_error::runtime_error;
+        };
+
+        class riscv_exception: public std::runtime_error {
+            using std::runtime_error::runtime_error;
+        };
 
     private:
         InstructionRegistry registry_;

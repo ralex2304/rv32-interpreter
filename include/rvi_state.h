@@ -5,7 +5,9 @@
 
 #include <array>
 #include <cstddef>
+#include <exception>
 #include <filesystem>
+#include <stdexcept>
 
 namespace rvi {
 
@@ -25,7 +27,7 @@ class ProgramCounter {
             value_ = get_next();
         }
 
-        ExecStatus set(Address value) {
+        ExecStatus set(Address value) noexcept {
             value_ = value;
 
             // Exception must be reported on a target instruction
@@ -35,7 +37,7 @@ class ProgramCounter {
     private:
         Address value_ = 0;
 
-        ExecStatus check_alignment_() {
+        ExecStatus check_alignment_() const noexcept {
             if ((get() * 8) % IALIGN != 0)
                 return ExecStatus::INSTRUCTION_ADDRESS_MISALIGNED;
 
@@ -77,6 +79,10 @@ class RviState {
         void init_execution_environment(const std::vector<std::string>& argv);
 
         ExecStatus syscall();
+
+        class exception: public std::runtime_error {
+            using std::runtime_error::runtime_error;
+        };
 
     private:
         UnsignValue sys_read_(SignValue fd, Address buf, UnsignValue count);
