@@ -1,6 +1,7 @@
 import argparse
 import os
 from subprocess import Popen, PIPE
+import subprocess
 
 parser = argparse.ArgumentParser()
 parser.add_argument("test_directory", help="directory with test executable and config")
@@ -11,6 +12,17 @@ args = parser.parse_args()
 directory = args.test_directory
 interpreter =  args.interpreter
 
+with open(directory + "/build_config.txt") as build_config:
+    marches = build_config.read().split()
+
+    for march in marches:
+        build_res = subprocess.run(["make", "--silent", f"{directory}/build/test_{march}",
+                                   f"SRC_DIR={directory}", f"ARCH={march}"])
+
+        if build_res.returncode != 0:
+            print(f"[FAIL] [BUILD_FAIL] Failed to build for -march={march}")
+            exit(1)
+
 def read_if_exists(filename):
     if not os.path.isfile(filename):
         return ""
@@ -19,49 +31,56 @@ def read_if_exists(filename):
         return file.read()
 
 test_num = 0
-tests_succeed = 0
+tests_run_count = 0
+tests_run_succeed = 0
 while os.path.isfile(directory + f"/{str(test_num+1)}_config.txt"):
     test_num += 1
     print(f"Starting test {test_num}")
 
     with open(directory + f"/{str(test_num)}_config.txt") as config:
-        argv_str = [directory + "/test"] + config.readline().split()
+        marches  = config.readline().split()
+        argv_str = config.readline().split()
         ret_code = int(config.readline())
 
     stdin  = read_if_exists(directory + f"/{str(test_num)}_stdin.txt")
     stdout = read_if_exists(directory + f"/{str(test_num)}_stdout.txt")
     stderr = read_if_exists(directory + f"/{str(test_num)}_stderr.txt")
 
-    p = Popen([interpreter] + argv_str, stdin=PIPE, stdout=PIPE, stderr=PIPE, text=True)
+    for march_num, march in enumerate(marches):
+        tests_run_count += 1
+        print(f"\tRunning test {test_num}.{march_num + 1} for -march={march}")
 
-    stdout_data, stderr_data = p.communicate(input=stdin)
-    ret = p.returncode
+        p = Popen([interpreter] + [directory + f"/build/test_{march}"] + argv_str,
+                  stdin=PIPE, stdout=PIPE, stderr=PIPE, text=True)
 
-    fail = False
-    if stdout != stdout_data:
-        print("\tstdout doesn't match")
-        fail = True
+        stdout_data, stderr_data = p.communicate(input=stdin)
+        ret = p.returncode
 
-    if stderr != stderr_data:
-        print("\tstderr doesn't match")
-        fail = True
+        fail = False
+        if stdout != stdout_data:
+            print("\tstdout doesn't match")
+            fail = True
 
-    if ret_code != ret:
-        print("\treturn code doesn't match")
-        fail = True
+        if stderr != stderr_data:
+            print("\tstderr doesn't match")
+            fail = True
 
-    if fail:
-        print(f"\t[FAIL]")
-    else:
-        print(f"\t[PASS]")
-        tests_succeed += 1
+        if ret_code != ret:
+            print("\treturn code doesn't match")
+            fail = True
+
+        if fail:
+            print(f"\t[FAIL]")
+        else:
+            print(f"\t[PASS]")
+            tests_run_succeed += 1
 
 assert test_num > 0, "Test config not found"
 
-if test_num != tests_succeed:
-    print(f"Summary: [FAIL]. {tests_succeed}/{test_num} succeed")
+if tests_run_count != tests_run_succeed:
+    print(f"Summary: [FAIL]. {tests_run_succeed}/{tests_run_count} succeed")
     exit(-1)
 else:
-    print(f"Summary: [PASS]. All {test_num} tests succeed")
+    print(f"Summary: [PASS]. All {tests_run_count} tests succeed")
     exit(0)
 

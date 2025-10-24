@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.16)
 
 set(END2END_TEST_LIST
-    rv32i/fibonacci
+    fibonacci
 )
 
 set(TASK_TEST_LIST
@@ -20,15 +20,6 @@ set(INTERPRETER ${CMAKE_BINARY_DIR}/${CMAKE_PROJECT_NAME})
 set(END2END_TEST_DIR ${CMAKE_CURRENT_SOURCE_DIR}/end_to_end)
 
 foreach(test IN LISTS END2END_TEST_LIST)
-    add_test(NAME end2end_test_build_${test} COMMAND
-        ${CMAKE_COMMAND} -E chdir ${END2END_TEST_DIR}
-            ${CMAKE_MAKE_PROGRAM} -f Makefile ${test}
-    )
-
-    set_tests_properties(end2end_test_build_${test} PROPERTIES
-        FIXTURES_SETUP end2end_test_${test}
-    )
-
     add_test(NAME end2end_test_${test} COMMAND
         ${CMAKE_COMMAND} -E chdir ${END2END_TEST_DIR}
             python3 test_runner.py --interpreter=${INTERPRETER} ${test}

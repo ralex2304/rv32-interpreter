@@ -94,7 +94,5 @@ Use CMake CTest to run tests
 ctest --build-dir build
 ```
 
-There are 2 test sets
-
-Tests supplied with the task are in [riscv-interpreter-task](https://gitlab.com/iDang3r/riscv-interpreter-task) submodule.
+[tests/README.md](tests) contains some details about tests
 
