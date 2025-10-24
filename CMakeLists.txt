@@ -1,0 +1,26 @@
+cmake_minimum_required(VERSION 3.16)
+
+project(rv32-interpreter LANGUAGES CXX)
+
+enable_testing()
+
+include(cmake/tools.cmake)
+
+include(cmake/defaults.cmake)
+
+include(cmake/third_party.cmake)
+
+add_executable(${PROJECT_NAME}
+    ${CMAKE_CURRENT_SOURCE_DIR}/source/main.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/source/rvi.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/source/rvi_arg_parser.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/source/rvi_elf.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/source/rvi_state.cpp
+)
+
+target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
+
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/tests)
+
+target_link_libraries(${PROJECT_NAME} PRIVATE rvi-defaults magic_enum::magic_enum loguru::loguru cxxopts::cxxopts)
+
