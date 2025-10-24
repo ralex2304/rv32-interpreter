@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 3.16)
 
 set(END2END_TEST_LIST
+    hello_asm
     echo
     fibonacci
 )

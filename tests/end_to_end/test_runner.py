@@ -69,7 +69,7 @@ while os.path.isfile(directory + f"/{str(test_num+1)}_config.txt"):
             fail = True
 
         if ret_code != ret:
-            print("\treturn code doesn't match")
+            print(f"\treturn code doesn't match: expected {ret_code}, got {ret}")
             fail = True
 
         if fail:

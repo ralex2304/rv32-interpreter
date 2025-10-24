@@ -21,7 +21,7 @@ all:
 $(API_O): $(API_S)
 	$(AS) $(ASFLAGS) -march=rv32i $< -o $@
 
-$(BUILD_DIR)/_$(ARCH)%.o: $(SRC_DIR)/%.s | $(BUILD_DIR)
+$(BUILD_DIR)/%_$(ARCH).o: $(SRC_DIR)/%.s | $(BUILD_DIR)
 	$(AS) $(ASFLAGS) -march=$(ARCH) $< -o $@
 
 $(BUILD_DIR)/%_$(ARCH).o: $(SRC_DIR)/%.c | $(BUILD_DIR)
