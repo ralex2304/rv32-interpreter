@@ -30,7 +30,7 @@ $(BUILD_DIR)/%_$(ARCH).o: $(SRC_DIR)/%.c | $(BUILD_DIR)
 $(BUILD_DIR)/%_$(ARCH).o: $(SRC_DIR)/%.cpp | $(BUILD_DIR)
 	$(CXX) $(CXXFLAGS) -march=$(ARCH) -c $< -o $@
 
-$(BUILD_DIR)/%: $(BUILD_DIR)/%.o $(API_O)
+$(BUILD_DIR)/%: $(BUILD_DIR)/%.o $(API_O) | $(BUILD_DIR)
 	$(CC) $(LDFLAGS) -march=$(ARCH) $^ -o $@
 
 $(BUILD_DIR):

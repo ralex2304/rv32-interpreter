@@ -1,0 +1,4 @@
+rv32i rv32im rv32imf rv32imf_zbb
+
+0
+
