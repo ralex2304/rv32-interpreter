@@ -51,7 +51,7 @@ target_compile_options(rvi-defaults
         $<$<CONFIG:Release>:
             -O2
             -march=native
-            -flto
+            -flto=auto
             -DNDEBUG
         >
 )
