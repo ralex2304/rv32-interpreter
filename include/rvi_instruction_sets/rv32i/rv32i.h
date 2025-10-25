@@ -38,6 +38,7 @@ inline void add_instructions(InstructionRegistry& registry) {
     registry.add_instruction(std::make_unique<Slli>());
     registry.add_instruction(std::make_unique<Srli>());
     registry.add_instruction(std::make_unique<Srai>());
+    /// OP
     registry.add_instruction(std::make_unique<Add>());
     registry.add_instruction(std::make_unique<Sub>());
     registry.add_instruction(std::make_unique<Sll>());
