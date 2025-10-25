@@ -14,7 +14,7 @@ class ArgParser {
         ArgParser(const int argc, const char* argv[]);
 
         bool is_help() {
-            return is_help_;
+            return result_.count("help");
         }
 
         Logger::Verbosity get_stderr_verbosity() {
@@ -35,8 +35,6 @@ class ArgParser {
         cxxopts::ParseResult result_;
 
         std::vector<std::pair<const std::string&, Logger::Verbosity>> log_files_;
-
-        bool is_help_;
 
         Logger::Verbosity stderr_verbosity_ = Logger::DEFAULT_STDERR_VERBOSITY;
 

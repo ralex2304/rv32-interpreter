@@ -53,7 +53,6 @@ ArgParser::ArgParser(const int argc, const char* argv[]) {
 
     if (result_.count("help")) {
         std::cout << options.help() << std::endl;
-        is_help_ = true;
         return;
     }
 

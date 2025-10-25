@@ -32,8 +32,7 @@ struct BranchInstruction: Instruction {
 
 struct OperBeq {
     static constexpr const char* name = "beq";
-    static constexpr ExtendedOpcode ext_opcode = {{PlainOpcodes::BRANCH, 0b000, 0},
-                                                  ExtendedOpcodeType::OPCODE_FUNCT_3};
+    static constexpr ExtendedOpcode ext_opcode = OpcodeFunct_3(PlainOpcodes::BRANCH, 0b000);
 
     static bool compare(UnsignValue op1, UnsignValue op2) {
         return op1 == op2;
@@ -43,8 +42,7 @@ using Beq = BranchInstruction<OperBeq>;
 
 struct OperBne {
     static constexpr const char* name = "bne";
-    static constexpr ExtendedOpcode ext_opcode = {{PlainOpcodes::BRANCH, 0b001, 0},
-                                                  ExtendedOpcodeType::OPCODE_FUNCT_3};
+    static constexpr ExtendedOpcode ext_opcode = OpcodeFunct_3(PlainOpcodes::BRANCH, 0b001);
 
     static bool compare(UnsignValue op1, UnsignValue op2) {
         return op1 != op2;
@@ -54,8 +52,7 @@ using Bne = BranchInstruction<OperBne>;
 
 struct OperBlt {
     static constexpr const char* name = "blt";
-    static constexpr ExtendedOpcode ext_opcode = {{PlainOpcodes::BRANCH, 0b100, 0},
-                                                  ExtendedOpcodeType::OPCODE_FUNCT_3};
+    static constexpr ExtendedOpcode ext_opcode = OpcodeFunct_3(PlainOpcodes::BRANCH, 0b100);
 
     static bool compare(UnsignValue op1, UnsignValue op2) {
         return std::bit_cast<SignValue>(op1) < std::bit_cast<SignValue>(op2);
@@ -65,8 +62,7 @@ using Blt = BranchInstruction<OperBlt>;
 
 struct OperBge {
     static constexpr const char* name = "bge";
-    static constexpr ExtendedOpcode ext_opcode = {{PlainOpcodes::BRANCH, 0b101, 0},
-                                                  ExtendedOpcodeType::OPCODE_FUNCT_3};
+    static constexpr ExtendedOpcode ext_opcode = OpcodeFunct_3(PlainOpcodes::BRANCH, 0b101);
 
     static bool compare(UnsignValue op1, UnsignValue op2) {
         return std::bit_cast<SignValue>(op1) >= std::bit_cast<SignValue>(op2);
@@ -76,8 +72,7 @@ using Bge = BranchInstruction<OperBge>;
 
 struct OperBltu {
     static constexpr const char* name = "bltu";
-    static constexpr ExtendedOpcode ext_opcode = {{PlainOpcodes::BRANCH, 0b110, 0},
-                                                  ExtendedOpcodeType::OPCODE_FUNCT_3};
+    static constexpr ExtendedOpcode ext_opcode = OpcodeFunct_3(PlainOpcodes::BRANCH, 0b110);
 
     static bool compare(UnsignValue op1, UnsignValue op2) {
         return op1 < op2;
@@ -87,8 +82,7 @@ using Bltu = BranchInstruction<OperBltu>;
 
 struct OperBgeu {
     static constexpr const char* name = "bgeu";
-    static constexpr ExtendedOpcode ext_opcode = {{PlainOpcodes::BRANCH, 0b111, 0},
-                                                  ExtendedOpcodeType::OPCODE_FUNCT_3};
+    static constexpr ExtendedOpcode ext_opcode = OpcodeFunct_3(PlainOpcodes::BRANCH, 0b111);
 
     static bool compare(UnsignValue op1, UnsignValue op2) {
         return op1 >= op2;

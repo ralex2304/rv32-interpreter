@@ -8,6 +8,7 @@
 #include "rvi_operands.h"
 
 #include <format>
+#include "magic_enum_adapter.h"
 #include <vector>
 
 using namespace rvi;

@@ -3,12 +3,31 @@
 #include "bit_utils.h"
 #include "rvi_datatypes.h"
 
-#include <array>
 #include <cstddef>
 #include <cstdint>
-#include "magic_enum_adapter.h"
+#include <tuple>
+#include <variant>
 
 namespace rvi {
+
+namespace impl {
+
+template<typename Tuple>
+struct TupleToVariant;
+
+template<typename... Types>
+struct TupleToVariant<std::tuple<Types...>> {
+    using type = std::variant<Types...>;
+};
+
+} // impl
+
+template<typename Key>
+struct ExtendedOpcodeHasher {
+    std::size_t operator()(const Key& k) const {
+        return std::hash<RawInstruction>()(RawInstruction(k));
+    }
+};
 
 enum class PlainOpcodes: uint8_t {
     LOAD     = 0b00'000'11,
@@ -26,65 +45,80 @@ enum class PlainOpcodes: uint8_t {
     SYSTEM   = 0b11'100'11,
 };
 
-class ExtendedOpcodeValue {
+class PlainOpcode {
     public:
-        constexpr ExtendedOpcodeValue(RawInstruction full_instruction)
-            : value_(full_instruction) {}
+        constexpr PlainOpcode(PlainOpcodes plain_opcode)
+            : opcode_(plain_opcode) {}
 
-        constexpr ExtendedOpcodeValue(PlainOpcodes plain_opcode, uint8_t funct3, uint8_t funct7)
-            : value_(static_cast<RawInstruction>(plain_opcode) |
-                     static_cast<RawInstruction>(funct3 << 12) |
-                     static_cast<RawInstruction>(funct7 << 25)) {}
+        constexpr PlainOpcode(RawInstruction raw_instr)
+            : opcode_(static_cast<PlainOpcodes>(get_instr_field<uint8_t, 0, 7>(raw_instr))) {}
 
-        constexpr operator RawInstruction() const noexcept {
-            return value_;
+        constexpr operator RawInstruction() const {
+            return static_cast<RawInstruction>(opcode_);
         }
 
     private:
-        const RawInstruction value_;
+        const PlainOpcodes opcode_;
 };
 
-enum class ExtendedOpcodeType {
-    OPCODE           = 0,
-    OPCODE_FUNCT_3   = 1,
-    OPCODE_FUNCT_3_7 = 2,
-    RAW_INSTR        = 3,
-};
-constexpr size_t EXTENDED_OPCODES_TYPES = magic_enum::enum_count<ExtendedOpcodeType>();
+class OpcodeFunct_3: public PlainOpcode {
+public:
+    constexpr OpcodeFunct_3(PlainOpcodes plain_opcode, uint8_t funct3)
+        : PlainOpcode(plain_opcode)
+        , funct3_(funct3) {}
 
-using ExtendedOpcode = std::pair<ExtendedOpcodeValue, ExtendedOpcodeType>;
+    OpcodeFunct_3(RawInstruction raw_instr)
+        : PlainOpcode(raw_instr)
+        , funct3_(get_instr_field<uint8_t, 12, 3>(raw_instr)) {}
+
+    operator RawInstruction() const {
+        return (static_cast<RawInstruction>(funct3_) << 12) |
+               PlainOpcode::operator RawInstruction();
+    }
+
+private:
+    const uint8_t funct3_;
+};
+
+class OpcodeFunct_3_7: public OpcodeFunct_3 {
+public:
+    constexpr OpcodeFunct_3_7(PlainOpcodes plain_opcode, uint8_t funct3, uint8_t funct7)
+        : OpcodeFunct_3(plain_opcode, funct3)
+        , funct7_(funct7) {}
+
+    OpcodeFunct_3_7(RawInstruction raw_instr)
+        : OpcodeFunct_3(raw_instr)
+        , funct7_(get_instr_field<uint8_t, 25, 7>(raw_instr)) {}
+
+    operator RawInstruction() const {
+        return (static_cast<RawInstruction>(funct7_) << 25) |
+               OpcodeFunct_3::operator RawInstruction();
+    }
+
+private:
+    const uint8_t funct7_;
+};
+
+using ExtendedOpcodeTuple = std::tuple<PlainOpcode, OpcodeFunct_3, OpcodeFunct_3_7, RawInstruction>;
+
+using ExtendedOpcode = typename impl::TupleToVariant<ExtendedOpcodeTuple>::type;
 
 class ExtendedOpcodesFactory {
-    public:
-        inline ExtendedOpcodesFactory(RawInstruction raw_instr) noexcept
-            : ext_opcodes_({ExtendedOpcodeValue(decode_plain_opcode_(raw_instr), 0, 0),
+public:
+    static constexpr ExtendedOpcodeTuple operator()(RawInstruction raw_instr) noexcept {
+        return TupleFiller_<ExtendedOpcodeTuple>::fill_with_same(raw_instr);
+    }
 
-                            ExtendedOpcodeValue(decode_plain_opcode_(raw_instr),
-                                                decode_funct3_(raw_instr), 0),
+private:
+    template<typename Tuple>
+    struct TupleFiller_;
 
-                            ExtendedOpcodeValue(decode_plain_opcode_(raw_instr),
-                                                decode_funct3_(raw_instr),
-                                                decode_funct7_(raw_instr)),
-
-                            ExtendedOpcodeValue(raw_instr)}) {}
-
-
-        inline auto begin() const noexcept { return ext_opcodes_.cbegin(); }
-        inline auto end()   const noexcept { return ext_opcodes_.cend(); }
-        constexpr size_t size() const noexcept { return ext_opcodes_.size(); }
-
-    private:
-        const std::array<ExtendedOpcodeValue, EXTENDED_OPCODES_TYPES> ext_opcodes_;
-
-        static inline PlainOpcodes decode_plain_opcode_(RawInstruction raw_instr) noexcept {
-            return static_cast<PlainOpcodes>(get_instr_field<uint8_t, 0, 7>(raw_instr));
+    template<typename... Types>
+    struct TupleFiller_<std::tuple<Types...>> {
+        static constexpr std::tuple<Types...> fill_with_same(RawInstruction value) {
+            return std::make_tuple(Types(value)...);
         }
-        static inline uint8_t decode_funct3_(RawInstruction raw_instr) noexcept {
-            return get_instr_field<uint8_t, 12, 3>(raw_instr);
-        }
-        static inline uint8_t decode_funct7_(RawInstruction raw_instr) noexcept {
-            return get_instr_field<uint8_t, 25, 7>(raw_instr);
-        }
+    };
 };
 
 } // namespace rvi
