@@ -46,19 +46,19 @@ enum class PlainOpcodes: uint8_t {
 };
 
 class PlainOpcode {
-    public:
-        constexpr PlainOpcode(PlainOpcodes plain_opcode)
-            : opcode_(plain_opcode) {}
+public:
+    constexpr PlainOpcode(PlainOpcodes plain_opcode)
+        : opcode_(plain_opcode) {}
 
-        constexpr PlainOpcode(RawInstruction raw_instr)
-            : opcode_(static_cast<PlainOpcodes>(get_instr_field<uint8_t, 0, 7>(raw_instr))) {}
+    constexpr PlainOpcode(RawInstruction raw_instr)
+        : opcode_(static_cast<PlainOpcodes>(get_instr_field<uint8_t, 0, 7>(raw_instr))) {}
 
-        constexpr operator RawInstruction() const {
-            return static_cast<RawInstruction>(opcode_);
-        }
+    constexpr operator RawInstruction() const {
+        return static_cast<RawInstruction>(opcode_);
+    }
 
-    private:
-        const PlainOpcodes opcode_;
+private:
+    const PlainOpcodes opcode_;
 };
 
 class OpcodeFunct_3: public PlainOpcode {

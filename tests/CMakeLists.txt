@@ -4,6 +4,7 @@ set(END2END_TEST_LIST
     hello_asm
     echo
     fibonacci
+    factorial
 )
 
 set(TASK_TEST_LIST
@@ -11,6 +12,8 @@ set(TASK_TEST_LIST
     exit_code_argv/runner.sh
     rv32i/test_add
     rv32i/test_sub
+    rv32im/test_mul
+    rv32im/test_div
     rv32imf_zbb/test_shift
     rv32imf_zbb/test_andn
 )

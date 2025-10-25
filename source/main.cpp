@@ -3,7 +3,6 @@
 #include "rvi_logger.h"
 
 #include <cxxopts.hpp>
-#include <iostream>
 
 using namespace rvi;
 using namespace std::literals;
