@@ -4,8 +4,6 @@
 #include "rvi_opcodes.h"
 #include "rvi_operands.h"
 
-#include "rvi_instruction_sets/common/arithmetics_template.h"
-
 #include <bit>
 
 namespace rvi {

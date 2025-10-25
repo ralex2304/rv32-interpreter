@@ -11,30 +11,30 @@
 namespace rvi {
 
 class Rvi {
-    public:
-        Rvi(const std::filesystem::path elf_path, const std::vector<std::string>& args);
+public:
+    Rvi(const std::filesystem::path elf_path, const std::vector<std::string>& args);
 
-        void run();
+    void run();
 
-        int get_exit_code() const {
-            int ret_code = std::bit_cast<int>(state_.regs.get(10));
-            LOG_F(INFO, "Return code %d", ret_code);
-            return ret_code;
-        }
+    int get_exit_code() const {
+        int ret_code = std::bit_cast<int>(state_.regs.get(10));
+        LOG_F(INFO, "Return code %d", ret_code);
+        return ret_code;
+    }
 
-        class execution_error: public std::runtime_error {
-            using std::runtime_error::runtime_error;
-        };
+    class execution_error: public std::runtime_error {
+        using std::runtime_error::runtime_error;
+    };
 
-        class riscv_exception: public std::runtime_error {
-            using std::runtime_error::runtime_error;
-        };
+    class riscv_exception: public std::runtime_error {
+        using std::runtime_error::runtime_error;
+    };
 
-    private:
-        InstructionRegistry registry_;
-        RviState state_;
+private:
+    InstructionRegistry registry_;
+    RviState state_;
 
-        ExecStatus run_instruction_(const RawInstruction raw_instr);
+    ExecStatus run_instruction_(const RawInstruction raw_instr);
 };
 
 } // namespace rvi
