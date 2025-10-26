@@ -5,6 +5,8 @@ set(END2END_TEST_LIST
     echo
     fibonacci
     factorial
+    bubble_sort
+    quick_sort
 )
 
 set(TASK_TEST_LIST

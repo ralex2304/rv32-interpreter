@@ -38,6 +38,9 @@ static_assert(REG_ABI_LAST_REG == REG_NUM);
 } // namespace
 
 void RegisterFile::dump() const {
+    if (!Logger::is_level_needed(Logger::DUMP))
+        return;
+
     std::string str = "00: zzzzzzzz";
 
     for (size_t i = 1; i < 32; i++) {

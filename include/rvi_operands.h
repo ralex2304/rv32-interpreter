@@ -61,6 +61,9 @@ public:
     }
 
     void dump() const {
+        if (!Logger::is_level_needed(Logger::DUMP))
+            return;
+
         static constexpr const char* fields_names[] = {"RD", "RS1", "RS2", "I", "S", "B", "U", "J"};
 
         std::string log_str;
