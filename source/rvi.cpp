@@ -60,6 +60,7 @@ ExecStatus Rvi::run_instruction_(const RawInstruction raw_instr) {
     const Operands operands(raw_instr);
 
     LOG_F(INFO, "%s", instr->get_name());
+
     operands.dump();
 
     try {

@@ -8,7 +8,7 @@ using namespace rvi;
 using namespace std::literals;
 
 int main(const int argc, const char* argv[]) {
-    Logger logger;
+    Logger::init();
 
     try {
         ArgParser arg_parser(argc, argv);
@@ -16,8 +16,8 @@ int main(const int argc, const char* argv[]) {
         if (arg_parser.is_help())
             return 0;
 
-        logger.set_stderr_verbosity(arg_parser.get_stderr_verbosity());
-        logger.add_log_files(arg_parser.get_log_files());
+        Logger::set_stderr_verbosity(arg_parser.get_stderr_verbosity());
+        Logger::add_log_files(arg_parser.get_log_files());
 
         auto& target_arguments = arg_parser.get_target_arguments();
 

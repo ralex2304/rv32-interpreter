@@ -16,6 +16,7 @@ add_executable(${PROJECT_NAME}
     ${CMAKE_CURRENT_SOURCE_DIR}/source/rvi_arg_parser.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/source/rvi_elf.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/source/rvi_instruction_registry.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/source/rvi_logger.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/source/rvi_state.cpp
 )
 

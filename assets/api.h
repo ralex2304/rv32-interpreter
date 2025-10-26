@@ -15,3 +15,6 @@ extern long write( int fd, const char* data, long len);
 #define stdout 1
 #define stderr 2
 
+typedef unsigned int size_t;
+typedef          int ssize_t;
+
