@@ -40,6 +40,10 @@ $(BUILD_DIR):
 clean:
 	rm -rf ./$(BUILD_DIR)
 
+.PHONY: clean_all
+clean_all:
+	rm -rf ./*/$(BUILD_DIR)
+
 .PHONY: test
 test: $(BINARY)
 	$(INTERPRETER) $(BINARY)

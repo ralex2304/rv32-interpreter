@@ -1,5 +1,7 @@
 cmake_minimum_required(VERSION 3.16)
 
+project(rv32-interpreter-tests)
+
 set(END2END_TEST_LIST
     hello_asm
     echo
@@ -20,13 +22,25 @@ set(TASK_TEST_LIST
     rv32imf_zbb/test_andn
 )
 
-set(INTERPRETER ${CMAKE_BINARY_DIR}/${CMAKE_PROJECT_NAME})
+if(NOT PROJECT_IS_TOP_LEVEL)
+    set(INTERPRETER ${CMAKE_BINARY_DIR}/${CMAKE_PROJECT_NAME})
+endif()
 
 # === End to end tests ===
 
 set(END2END_TEST_DIR ${CMAKE_CURRENT_SOURCE_DIR}/end_to_end)
 
+set(END2END_TEST_BUILD_LIST "")
+
 foreach(test IN LISTS END2END_TEST_LIST)
+    add_custom_command(
+        OUTPUT ${END2END_TEST_DIR}/${test}/build
+        COMMAND ${CMAKE_COMMAND} -E chdir ${END2END_TEST_DIR}
+            python3 test_build.py ${test}
+    )
+
+    list(APPEND END2END_TEST_BUILD_LIST ${END2END_TEST_DIR}/${test}/build)
+
     add_test(NAME end2end_test_${test} COMMAND
         ${CMAKE_COMMAND} -E chdir ${END2END_TEST_DIR}
             python3 test_runner.py --interpreter=${INTERPRETER} ${test}
@@ -35,31 +49,38 @@ endforeach()
 
 # === TASK tests ===
 
-add_test(
-    NAME task_tests_setup
-    COMMAND ${CMAKE_COMMAND} -E chdir ${CMAKE_CURRENT_SOURCE_DIR}/riscv-interpreter-task/
+set(TASK_TEST_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/riscv-interpreter-task)
+set(TASK_TEST_BINARY_DIR ${CMAKE_CURRENT_SOURCE_DIR}/riscv-interpreter-task/bin)
+
+add_custom_command(
+    OUTPUT ${TASK_TEST_BINARY_DIR}
+    COMMAND ${CMAKE_COMMAND} -E chdir ${TASK_TEST_SOURCE_DIR}
         ${CMAKE_MAKE_PROGRAM} -f Makefile all
 )
-
-set_tests_properties(task_tests_setup PROPERTIES
-    FIXTURES_SETUP "${TASK_TEST_LIST}"
-)
-
-set(TASK_TEST_DIR ${CMAKE_CURRENT_SOURCE_DIR}/riscv-interpreter-task/bin)
 
 foreach(test IN LISTS TASK_TEST_LIST)
     get_filename_component(exec_name ${test} NAME)
 
     if(exec_name STREQUAL "runner.sh")
-        get_filename_component(runner_dir ${TASK_TEST_DIR}/${test} DIRECTORY)
+        get_filename_component(runner_dir ${TASK_TEST_BINARY_DIR}/${test} DIRECTORY)
 
         add_test(NAME task_test_${test} COMMAND ${CMAKE_COMMAND} -E chdir ${runner_dir}
             ./runner.sh ${INTERPRETER}
         )
     else()
-        add_test(NAME task_test_${test} COMMAND ${CMAKE_COMMAND} -E chdir ${TASK_TEST_DIR}
-            ${INTERPRETER} ${TASK_TEST_DIR}/${test}
+        add_test(NAME task_test_${test} COMMAND ${CMAKE_COMMAND} -E chdir ${TASK_TEST_BINARY_DIR}
+            ${INTERPRETER} ${TASK_TEST_BINARY_DIR}/${test}
         )
     endif()
 endforeach()
+
+# === Tests build ===
+
+set(ALL_TESTS_BUILD_LIST ${END2END_TEST_BUILD_LIST} ${TASK_TEST_BINARY_DIR})
+
+if(PROJECT_IS_TOP_LEVEL)
+    add_custom_target(TestsBuild ALL DEPENDS ${ALL_TESTS_BUILD_LIST})
+else()
+    add_custom_target(TestsBuild DEPENDS ${ALL_TESTS_BUILD_LIST})
+endif()
 

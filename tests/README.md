@@ -10,7 +10,7 @@ Submodule has its own Makefile to build and run tests
 
 ## End to end tests
 
-End to end tests are built and run by `test_runner.py`. Each test can have several configurations, listed in its directory
+End to end tests are built by `test_build.py` and run by `test_runner.py`. Each test can have several configurations, listed in its directory
 
 ### Test sources
 
