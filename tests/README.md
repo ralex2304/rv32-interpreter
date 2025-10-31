@@ -2,6 +2,30 @@
 
 Currently there are 2 sets of tests. All tests are listed in `CMakeLists.txt` in this directory
 
+## Build and run
+
+You can build and run tests from top `CMakeLists` or from this directory. In later case:
+
+Build only:
+
+```bash
+cd tests
+cmake -S . -B build
+cmake --build build
+```
+
+To run the tests you must specify interpreter path in `INTERPRETER` variable
+
+Build and run:
+
+```bash
+cd tests
+cmake -S. -B build -DINTERPRETER=../build/rv32-interpreter
+cmake --build build
+
+ctest --build-dir build
+```
+
 ## Task tests
 
 Tests supplied with the task are in [riscv-interpreter-task](https://gitlab.com/iDang3r/riscv-interpreter-task) submodule
@@ -10,7 +34,7 @@ Submodule has its own Makefile to build and run tests
 
 ## End to end tests
 
-End to end tests are built and run by `test_runner.py`. Each test can have several configurations, listed in its directory
+End to end tests are built by `test_build.py` and run by `test_runner.py`. Each test can have several configurations, listed in its directory
 
 ### Test sources
 

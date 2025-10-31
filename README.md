@@ -34,14 +34,14 @@ TODO:
 ## Build
 
 ```bash
-cmake -S . -B <build_dir> -DCMAKE_BUILD_TYPE={Debug, Release} [-DUSE_SANITIZER='Address;Undefined']
-cmake --build build
+cmake -S . -B <build_dir> -DCMAKE_BUILD_TYPE={Debug, Release} [-DUSE_SANITIZER='Address;Undefined'] [-DALWAYS_BUILD_TESTS=1]
+cmake --build <build_dir>
 ```
 
 E.g:
 
 ```bash
-cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug -DUSE_SANITIZER='Address;Undefined'
+cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug -DUSE_SANITIZER='Address;Undefined' -DALWAYS_BUILD_TESTS=1
 cmake --build build
 ```
 
@@ -74,6 +74,16 @@ Complex mode (with interpreter arguments):
 
 ```
 ## Tests
+
+### Build tests
+
+```bash
+cmake --build build --target TestsBuild
+```
+
+Or they will be always built by default `cmake --build build` if you have specified `-DALWAYS_BUILD_TESTS=1`
+
+### Run tests
 
 Use CMake CTest to run tests
 

@@ -1,0 +1,78 @@
+name: "CI - build and test"
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build_tests:
+    runs-on: ubuntu-latest
+    container: docker.io/ralex2304/rv32-interpreter-ci:v1
+
+    steps:
+      - name: 'checkout'
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: 'build tests'
+        run: |
+          cmake -S tests -B tests/build
+          cmake --build tests/build --parallel
+
+      - name: 'upload artifacts'
+        uses: actions/upload-artifact@v4
+        with:
+          name: 'compiled-tests'
+          path: |
+            tests/riscv-interpreter-task/bin/
+            tests/end_to_end/*/build/
+
+  build_and_test:
+    needs: build_tests
+    runs-on: ubuntu-latest
+    container: docker.io/ralex2304/rv32-interpreter-ci:v1
+
+    strategy:
+      fail-fast: false
+      matrix:
+        compiler:
+          - { cc: gcc, cxx: g++ }
+          - { cc: clang, cxx: clang++ }
+        build_type: [Debug, Release]
+        sanitizers: ["address,undefined", ""]
+        exclude:
+          - build_type: Release
+            sanitizers: "address,undefined"
+
+    steps:
+      - name: 'checkout'
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: 'build'
+        run: |
+          cmake -S . -B build \
+            -DUSE_SANITIZER='${{matrix.sanitizers}}' \
+            -DCMAKE_BUILD_TYPE=${{matrix.build_type}} \
+            -DCMAKE_C_COMPILER=${{matrix.compiler.cc}} \
+            -DCMAKE_CXX_COMPILER=${{matrix.compiler.cxx}}
+          cmake --build build --parallel `nproc`
+
+      - name: 'download compiled tests'
+        uses: actions/download-artifact@v5
+        with:
+          name: 'compiled-tests'
+          path: tests
+
+      - name: 'give permissions to test runner scripts'
+        run: |
+          chmod +x tests/riscv-interpreter-task/bin/*/runner.sh
+
+      - name: 'run tests'
+        run: |
+          ctest --test-dir build --output-on-failure --parallel `nproc`
+
