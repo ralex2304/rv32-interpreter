@@ -29,25 +29,19 @@ private:
     template<typename Tuple>
     struct GetInstructionRegistriesMaps_;
 
+    template<typename Key>
+    using InstructionRegistryMap = std::unordered_map<Key, std::unique_ptr<Instruction>,
+                                                      ExtendedOpcodeHasher<Key>>;
+
     template<typename... Keys>
     struct GetInstructionRegistriesMaps_<std::tuple<Keys...>> {
-         using type = std::tuple<std::unordered_map<Keys, std::unique_ptr<Instruction>,
-                                                    ExtendedOpcodeHasher<Keys>>...>;
+         using type = std::tuple<InstructionRegistryMap<Keys>...>;
     };
 
     using InstructionRegistriesMaps = typename GetInstructionRegistriesMaps_
                                                                 <ExtendedOpcodeTuple>::type;
 
     InstructionRegistriesMaps registries_;
-
-    template<typename Variant, size_t... Indexes>
-    bool try_emplace_instruction_impl_(const Variant& ext_opcode,
-                                       std::unique_ptr<Instruction> instruction,
-                                       std::index_sequence<Indexes...>);
-
-    template<typename... Types>
-    bool try_emplace_instruction_(const std::variant<Types...>& ext_opcode,
-                                  std::unique_ptr<Instruction> instruction);
 
     template<typename Tuple, size_t Index>
     const Instruction* search_in_registry_(const Tuple& ext_opcodes) const;
