@@ -6,36 +6,9 @@
 
 #include <cassert>
 #include <utility>
+#include <variant>
 
 using namespace rvi;
-
-template<typename Variant, size_t... Indexes>
-bool InstructionRegistry::try_emplace_instruction_impl_(const Variant& ext_opcode,
-                                                        std::unique_ptr<Instruction> instruction,
-                                                        std::index_sequence<Indexes...>) {
-
-    bool is_inserted = ([&registries = registries_, ext_opcode, &instruction]() {
-            const auto& ext_opcode_value = std::get_if<Indexes>(&ext_opcode);
-
-            if (ext_opcode_value == nullptr)
-                return true;
-
-            auto& registry = std::get<Indexes>(registries);
-
-            auto [it, inserted] = registry.try_emplace(*ext_opcode_value, std::move(instruction));
-
-            return inserted;
-        }() && ...);
-
-    return is_inserted;
-}
-
-template<typename... Types>
-bool InstructionRegistry::try_emplace_instruction_(const std::variant<Types...>& ext_opcode,
-                                                   std::unique_ptr<Instruction> instruction) {
-    return try_emplace_instruction_impl_(ext_opcode, std::move(instruction),
-                                         std::make_index_sequence<sizeof...(Types)>{});
-}
 
 void InstructionRegistry::add_instruction(std::unique_ptr<Instruction> instruction) {
     using namespace std::literals;
@@ -43,9 +16,17 @@ void InstructionRegistry::add_instruction(std::unique_ptr<Instruction> instructi
     ExtendedOpcode ext_opcode = instruction->get_extended_opcode();
     auto instr_name = instruction->get_name();
 
-    if (!try_emplace_instruction_(ext_opcode, std::move(instruction)))
-        throw exception("Error adding instruction \""s + std::string(instr_name) +
-                        "\": already exist"s);
+    std::visit([&registries = registries_, &instruction, &instr_name](const auto& ext_opcode_value) {
+        using T = std::decay_t<decltype(ext_opcode_value)>;
+
+        auto& registry = std::get<InstructionRegistryMap<T>>(registries);
+
+        auto [it, inserted] = registry.try_emplace(ext_opcode_value, std::move(instruction));
+
+        if (!inserted)
+            throw exception("Error adding instruction \""s + std::string(instr_name) +
+                            "\": already exist"s);
+    }, ext_opcode);
 }
 
 template<typename Tuple, size_t Index>
