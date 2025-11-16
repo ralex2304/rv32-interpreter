@@ -9,9 +9,7 @@
 
 #include <memory>
 
-namespace rvi {
-
-namespace rv32im {
+namespace rvi::rv32m {
 
 inline void add_instructions(InstructionRegistry& registry) {
     /// OP
@@ -25,7 +23,5 @@ inline void add_instructions(InstructionRegistry& registry) {
     registry.add_instruction(std::make_unique<Remu>());
 }
 
-} // namespace rv32im
-
-} // namespace rvi
+} // namespace rvi::rv32im
 

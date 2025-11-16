@@ -1,14 +1,13 @@
 #pragma once
 
 #include "rvi_datatypes.h"
+#include "rvi_instructions.h"
 #include "rvi_opcodes.h"
 #include "rvi_operands.h"
 
 #include <bit>
 
-namespace rvi {
-
-namespace rv32i {
+namespace rvi::rv32i {
 
 struct OperLui {
     static constexpr const char* name = "lui";
@@ -220,6 +219,5 @@ struct OperAnd {
 };
 using And = ArithmInstruction<OperAnd, RegValGetter<Operands::RS1>, RegValGetter<Operands::RS2>>;
 
-} // namespace rv32i
+} // namespace rvi::rv32i
 
-} // namespace rvi

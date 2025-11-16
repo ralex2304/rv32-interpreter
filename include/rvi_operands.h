@@ -21,6 +21,8 @@ public:
                   get_instr_field<RegisterNum, 15, REG_FIELD_WIDTH>(raw_instr),
                   // RS2:
                   get_instr_field<RegisterNum, 20, REG_FIELD_WIDTH>(raw_instr),
+                  // RS2:
+                  get_instr_field<RegisterNum, 27, REG_FIELD_WIDTH>(raw_instr),
                   // IMM_I:
                   uval_sign_ext<11>( get_instr_field<Immediate, 20, 12>(raw_instr)       ),
                   // IMM_S:
@@ -43,11 +45,12 @@ public:
         RD          = 0,
         RS1         = 1,
         RS2         = 2,
-        IMM_I       = 3,
-        IMM_S       = 4,
-        IMM_B       = 5,
-        IMM_U       = 6,
-        IMM_J       = 7,
+        RS3         = 3,
+        IMM_I       = 4,
+        IMM_S       = 5,
+        IMM_B       = 6,
+        IMM_U       = 7,
+        IMM_J       = 8,
 
         FIELDS_NUM,
 
@@ -64,7 +67,7 @@ public:
         if (!Logger::is_level_needed(Logger::DUMP))
             return;
 
-        static constexpr const char* fields_names[] = {"RD", "RS1", "RS2", "I", "S", "B", "U", "J"};
+        static constexpr const char* fields_names[] = {"RD", "RS1", "RS2", "RS3", "I", "S", "B", "U", "J"};
 
         std::string log_str;
 
@@ -89,6 +92,15 @@ struct RegValGetter {
 
     static UnsignValue get_val(const RviState& state, const Operands& operands) {
         return state.regs.get(operands.get<RegisterNum, field>());
+    };
+};
+
+template <Operands::Fields field>
+struct FloatRegValGetter {
+    static_assert(Operands::RD <= field && field <= Operands::RS3);
+
+    static FloatValue get_val(const RviState& state, const Operands& operands) {
+        return state.fregs[operands.get<RegisterNum, field>()];
     };
 };
 

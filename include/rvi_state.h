@@ -56,6 +56,7 @@ public:
     inline Register set(size_t index, Register value) {
         if (index == 0)
             return 0;
+
         return regs_[index - 1] = value;
     }
 
@@ -70,6 +71,8 @@ public:
     ProgramCounter pc = {};
 
     RegisterFile regs = {};
+
+    std::array<FloatValue, FLOAT_REG_NUM> fregs = {};
 
     Memory mem = {};
 

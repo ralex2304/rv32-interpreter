@@ -39,7 +39,9 @@ struct LoadInstruction: Instruction {
     }
 };
 
-namespace rv32i {
+} // namespace rvi
+
+namespace rvi::rv32i {
 
 struct OperLb {
     static constexpr const char* name = "lb";
@@ -76,7 +78,5 @@ struct OperLhu {
 };
 using Lhu = LoadInstruction<OperLhu>;
 
-} // namespace rv32i
-
-} // namespace rvi
+} // namespace rvi::rv32i
 

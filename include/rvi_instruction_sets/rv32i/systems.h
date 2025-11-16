@@ -5,9 +5,7 @@
 #include "rvi_operands.h"
 #include "rvi_instructions.h"
 
-namespace rvi {
-
-namespace rv32i {
+namespace rvi::rv32i {
 
 struct OperEcall {
     static constexpr const char* name = "ecall";
@@ -27,7 +25,5 @@ struct OperEbreak {
 };
 using Ebreak = UnimplementedInstruction<OperEbreak>;
 
-} // namespace rv32i
-
-} // namespace rvi
+} // namespace rvi::rv32i
 

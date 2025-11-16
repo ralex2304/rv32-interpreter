@@ -7,9 +7,7 @@
 
 #include <bit>
 
-namespace rvi {
-
-namespace rv32i {
+namespace rvi::rv32i {
 
 template <typename Oper, class... ValuesGetters>
 struct JalInstruction: Instruction {
@@ -52,7 +50,5 @@ struct OperJalr {
 };
 using Jalr = JalInstruction<OperJalr, RegValGetter<Operands::RS1>, ImmValGetter<Operands::IMM_I>>;
 
-} // namespace rv32i
-
-} // namespace rvi
+} // namespace rvi::rv32i
 
