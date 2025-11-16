@@ -47,7 +47,6 @@ void Rvi::run() {
         throw riscv_exception(std::format("pc = 0x{:x} - {}", state_.pc.get(),
                                           magic_enum::enum_name(status)));
     }
-
 }
 
 ExecStatus Rvi::run_instruction_(const RawInstruction raw_instr) {

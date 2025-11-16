@@ -18,6 +18,10 @@ set(TASK_TEST_LIST
     rv32i/test_sub
     rv32im/test_mul
     rv32im/test_div
+    rv32imf/test_fadd
+    rv32imf/test_fsub
+    rv32imf/test_fdiv
+    rv32imf/test_fmul
     rv32imf_zbb/test_shift
     rv32imf_zbb/test_andn
 )
