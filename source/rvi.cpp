@@ -2,12 +2,14 @@
 
 #include "rvi_datatypes.h"
 #include "rvi_instruction_registry.h"
-#include "rvi_instruction_sets/rv32i/rv32i.h"
-#include "rvi_instruction_sets/rv32m/rv32m.h"
-#include "rvi_instruction_sets/rv32f/rv32f.h"
 #include "rvi_instructions.h"
 #include "rvi_logger.h"
 #include "rvi_operands.h"
+
+#include "rvi_instruction_sets/rv32i/rv32i.h"
+#include "rvi_instruction_sets/rv32m/rv32m.h"
+#include "rvi_instruction_sets/rv32f/rv32f.h"
+#include "rvi_instruction_sets/rv32zbb/rv32zbb.h"
 
 #include <format>
 #include "magic_enum_adapter.h"
@@ -27,6 +29,8 @@ Rvi::Rvi(const std::filesystem::path elf_path, const std::vector<std::string>& a
         rv32m::add_instructions(registry_);
         LOG_F(INFO, "Registry: rv32f extension");
         rv32f::add_instructions(registry_);
+        LOG_F(INFO, "Registry: rv32zbb extension");
+        rv32zbb::add_instructions(registry_);
     } catch (const InstructionRegistry::exception& e) {
         throw execution_error("Instruction registry error: "s + e.what());
     }

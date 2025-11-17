@@ -12,12 +12,8 @@ directory = args.test_directory
 interpreter =  args.interpreter
 
 def get_marches(marches):
-    march_build_list = ["rv32i", "rv32im", "rv32imf"]
-    # TODO: march list from build config
-    """
     with open(directory + "/build_config.txt") as build_config:
         march_build_list = build_config.read().split()
-    """
 
     last_march = marches[-1]
     if last_march.endswith("+"):

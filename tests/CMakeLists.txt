@@ -25,8 +25,10 @@ set(TASK_TEST_LIST
     rv32imf/test_fsub
     rv32imf/test_fdiv
     rv32imf/test_fmul
-    rv32imf_zbb/test_shift
     rv32imf_zbb/test_andn
+    rv32imf_zbb/test_shift
+    rv32imf_zbb/test_or
+    rv32imf_zbb/test_xor
 )
 
 if(NOT PROJECT_IS_TOP_LEVEL)

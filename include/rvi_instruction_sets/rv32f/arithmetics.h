@@ -82,7 +82,7 @@ using Fdiv = FloatArithmInstruction<OperFdiv, FloatRegValGetter<Operands::RS1>,
 
 struct OperFsqrt {
     static constexpr const char* name = "fsqrt.s";
-    static constexpr ExtendedOpcode ext_opcode = OpcodeFunct_3_7_width(PlainOpcodes::OP_FP,
+    static constexpr ExtendedOpcode ext_opcode = OpcodeFunct_3_5_7(PlainOpcodes::OP_FP,
                                                             ROUND_MODE, 0b00000, 0b01011'00);
 
     static FloatValue evaluate(FloatValue rs1) {

@@ -56,7 +56,7 @@ struct FloatMoveToFreg: Instruction {
 
 struct OperFcvtws {
     static constexpr const char* name = "fcvt.w.s";
-    static constexpr ExtendedOpcode ext_opcode = OpcodeFunct_3_7_width(PlainOpcodes::OP_FP,
+    static constexpr ExtendedOpcode ext_opcode = OpcodeFunct_3_5_7(PlainOpcodes::OP_FP,
                                                      FCVTWS_ROUND_MODE, 0b00000, 0b11000'00);
 
     static UnsignValue evaluate(FloatValue rs1) {
@@ -67,7 +67,7 @@ using Fcvtws = FloatMoveToReg<OperFcvtws>;
 
 struct OperFcvtwus {
     static constexpr const char* name = "fcvt.wu.s";
-    static constexpr ExtendedOpcode ext_opcode = OpcodeFunct_3_7_width(PlainOpcodes::OP_FP,
+    static constexpr ExtendedOpcode ext_opcode = OpcodeFunct_3_5_7(PlainOpcodes::OP_FP,
                                                      FCVTWS_ROUND_MODE, 0b00001, 0b11000'00);
 
     static UnsignValue evaluate(FloatValue rs1) {
@@ -78,8 +78,8 @@ using Fcvtwus = FloatMoveToReg<OperFcvtwus>;
 
 struct OperFmvxw {
     static constexpr const char* name = "fmv.x.w";
-    static constexpr ExtendedOpcode ext_opcode = OpcodeFunct_3_7_width(PlainOpcodes::OP_FP,
-                                                                 0b000, 0b00000, 0b11100'00);
+    static constexpr ExtendedOpcode ext_opcode = OpcodeFunct_3_5_7(PlainOpcodes::OP_FP,
+                                                                   0b000, 0b00000, 0b11100'00);
 
     static UnsignValue evaluate(FloatValue rs1) {
         return std::bit_cast<UnsignValue>(rs1);
@@ -89,7 +89,7 @@ using Fmvxw = FloatMoveToReg<OperFmvxw>;
 
 struct OperFcvtsw {
     static constexpr const char* name = "fcvt.s.w";
-    static constexpr ExtendedOpcode ext_opcode = OpcodeFunct_3_7_width(PlainOpcodes::OP_FP,
+    static constexpr ExtendedOpcode ext_opcode = OpcodeFunct_3_5_7(PlainOpcodes::OP_FP,
                                                             ROUND_MODE, 0b00000, 0b11010'00);
 
     static FloatValue evaluate(UnsignValue rs1) {
@@ -100,7 +100,7 @@ using Fcvtsw = FloatMoveToFreg<OperFcvtsw>;
 
 struct OperFcvtswu {
     static constexpr const char* name = "fcvt.s.wu";
-    static constexpr ExtendedOpcode ext_opcode = OpcodeFunct_3_7_width(PlainOpcodes::OP_FP,
+    static constexpr ExtendedOpcode ext_opcode = OpcodeFunct_3_5_7(PlainOpcodes::OP_FP,
                                                             ROUND_MODE, 0b00001, 0b11010'00);
 
     static FloatValue evaluate(UnsignValue rs1) {
@@ -111,8 +111,8 @@ using Fcvtswu = FloatMoveToFreg<OperFcvtswu>;
 
 struct OperFmvwx {
     static constexpr const char* name = "fmv.w.x";
-    static constexpr ExtendedOpcode ext_opcode = OpcodeFunct_3_7_width(PlainOpcodes::OP_FP,
-                                                                 0b000, 0b00000, 0b11110'00);
+    static constexpr ExtendedOpcode ext_opcode = OpcodeFunct_3_5_7(PlainOpcodes::OP_FP,
+                                                                   0b000, 0b00000, 0b11110'00);
 
     static FloatValue evaluate(UnsignValue rs1) {
         return std::bit_cast<FloatValue>(rs1);
@@ -122,8 +122,8 @@ using Fmvwx = FloatMoveToFreg<OperFmvwx>;
 
 struct OperFclass {
     static constexpr const char* name = "fclass.s";
-    static constexpr ExtendedOpcode ext_opcode = OpcodeFunct_3_7_width(PlainOpcodes::OP_FP,
-                                                                 0b001, 0b00000, 0b11100'00);
+    static constexpr ExtendedOpcode ext_opcode = OpcodeFunct_3_5_7(PlainOpcodes::OP_FP,
+                                                                   0b001, 0b00000, 0b11100'00);
 
     enum FclassFields {
         NEG_INFINITY  = 1 << 0,
