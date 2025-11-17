@@ -11,6 +11,7 @@ set(END2END_TEST_LIST
     bubble_sort
     quick_sort
     float_fma
+    fclass
 )
 
 set(TASK_TEST_LIST

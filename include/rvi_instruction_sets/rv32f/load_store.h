@@ -3,6 +3,7 @@
 #include "rvi_datatypes.h"
 #include "rvi_instructions.h"
 #include "rvi_opcodes.h"
+
 #include <bit>
 
 namespace rvi::rv32f {

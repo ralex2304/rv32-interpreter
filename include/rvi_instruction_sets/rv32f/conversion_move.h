@@ -6,7 +6,10 @@
 #include "rvi_operands.h"
 
 #include "config.h"
+
 #include <bit>
+#include <cmath>
+#include <cstdint>
 
 namespace rvi::rv32f {
 
@@ -122,10 +125,45 @@ struct OperFclass {
     static constexpr ExtendedOpcode ext_opcode = OpcodeFunct_3_7_width(PlainOpcodes::OP_FP,
                                                                  0b001, 0b00000, 0b11100'00);
 
+    enum FclassFields {
+        NEG_INFINITY  = 1 << 0,
+        NEG_NORMAL    = 1 << 1,
+        NEG_SUBNORMAL = 1 << 2,
+        NEG_ZERO      = 1 << 3,
+        POS_ZERO      = 1 << 4,
+        POS_SUBNORMAL = 1 << 5,
+        POS_NORMAL    = 1 << 6,
+        POS_INFINITY  = 1 << 7,
+        SIGNALING_NAN = 1 << 8,
+        QUIET_NAN     = 1 << 9,
+    };
+
     static UnsignValue evaluate(FloatValue rs1) {
-        // TODO: fclass.s
-        throw Instruction::execution_error(std::format("fclass.s: unable to detect "
-                        "{} = 0b{:b} float class", rs1, std::bit_cast<UnsignValue>(rs1)));
+        switch (std::fpclassify(rs1)) {
+            case FP_INFINITE:
+                return (rs1 < 0) ? NEG_INFINITY : POS_INFINITY;
+
+            case FP_NAN:
+                if (std::numeric_limits<float>::has_signaling_NaN &&
+                        std::bit_cast<uint32_t>(rs1) ==
+                        std::bit_cast<uint32_t>(std::numeric_limits<float>::signaling_NaN()))
+                    return SIGNALING_NAN;
+                else
+                    return QUIET_NAN;
+
+            case FP_NORMAL:
+                return (rs1 < 0) ? NEG_NORMAL : POS_NORMAL;
+
+            case FP_SUBNORMAL:
+                return (rs1 < 0) ? NEG_SUBNORMAL : POS_SUBNORMAL;
+
+            case FP_ZERO:
+                return (std::bit_cast<uint32_t>(rs1) >> 31) ? NEG_ZERO : POS_ZERO;
+
+            default:
+                throw Instruction::execution_error(std::format("fclass.s: unable to detect "
+                            "{} = 0b{:b} float class", rs1, std::bit_cast<UnsignValue>(rs1)));
+        }
     }
 };
 using Fclass = FloatMoveToReg<OperFclass>;
