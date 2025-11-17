@@ -87,25 +87,20 @@ private:
 };
 
 template <Operands::Fields field>
-struct RegNumGetter {
-    static_assert(Operands::RD <= field && field <= Operands::RS3);
-
-    static RegisterNum get_val(const RviState&, const Operands& operands) {
-        return operands.get<RegisterNum, field>();
-    }
-};
-
-template <Operands::Fields field>
 struct RegValGetter {
+    static_assert(Operands::RD <= field && field <= Operands::RS2);
+
     static UnsignValue get_val(const RviState& state, const Operands& operands) {
-        return state.regs.get(RegNumGetter<field>::get_val(state, operands));
+        return state.regs.get(operands.get<RegisterNum, field>());
     }
 };
 
 template <Operands::Fields field>
 struct FloatRegValGetter {
+    static_assert(Operands::RD <= field && field <= Operands::RS3);
+
     static FloatValue get_val(const RviState& state, const Operands& operands) {
-        return state.fregs[RegNumGetter<field>::get_val(state, operands)];
+        return state.fregs[operands.get<RegisterNum, field>()];
     }
 };
 
