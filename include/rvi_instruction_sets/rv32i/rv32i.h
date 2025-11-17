@@ -19,9 +19,7 @@
 
 #include <memory>
 
-namespace rvi {
-
-namespace rv32i {
+namespace rvi::rv32i {
 
 inline void add_instructions(InstructionRegistry& registry) {
     /// LUI
@@ -77,7 +75,5 @@ inline void add_instructions(InstructionRegistry& registry) {
     registry.add_instruction(std::make_unique<Ebreak>());
 }
 
-} // namespace rv32i
-
-} // namespace rvi
+} // namespace rvi::rv32i
 

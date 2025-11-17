@@ -31,13 +31,21 @@ struct ExtendedOpcodeHasher {
 
 enum class PlainOpcodes: uint8_t {
     LOAD     = 0b00'000'11,
+    LOAD_FP  = 0b00'001'11,
     MISC_MEM = 0b00'011'11,
     OP_IMM   = 0b00'100'11,
     AUIPC    = 0b00'101'11,
 
     STORE    = 0b01'000'11,
+    STORE_FP = 0b01'001'11,
     OP       = 0b01'100'11,
     LUI      = 0b01'101'11,
+
+    MADD     = 0b10'000'11,
+    MSUB     = 0b10'001'11,
+    NMSUB    = 0b10'010'11,
+    NMADD    = 0b10'011'11,
+    OP_FP    = 0b10'100'11,
 
     BRANCH   = 0b11'000'11,
     JALR     = 0b11'001'11,
@@ -99,7 +107,47 @@ private:
     const uint8_t funct7_;
 };
 
-using ExtendedOpcodeTuple = std::tuple<PlainOpcode, OpcodeFunct_3, OpcodeFunct_3_7, RawInstruction>;
+class OpcodeFunct_3_7_width: public OpcodeFunct_3_7 {
+public:
+    constexpr OpcodeFunct_3_7_width(PlainOpcodes plain_opcode, uint8_t funct3,
+                                    uint8_t width, uint8_t funct7)
+        : OpcodeFunct_3_7(plain_opcode, funct3, funct7)
+        , width_(width) {}
+
+    OpcodeFunct_3_7_width(RawInstruction raw_instr)
+        : OpcodeFunct_3_7(raw_instr)
+        , width_(get_instr_field<uint8_t, 20, 5>(raw_instr)) {}
+
+    operator RawInstruction() const {
+        return (static_cast<RawInstruction>(width_) << 20) |
+               OpcodeFunct_3_7::operator RawInstruction();
+    }
+
+private:
+    const uint8_t width_;
+};
+
+class OpcodeRs3: public OpcodeFunct_3 {
+public:
+    constexpr OpcodeRs3(PlainOpcodes plain_opcode, uint8_t funct3, uint8_t fmt)
+        : OpcodeFunct_3(plain_opcode, funct3)
+        , fmt_(fmt) {}
+
+    OpcodeRs3(RawInstruction raw_instr)
+        : OpcodeFunct_3(raw_instr)
+        , fmt_(get_instr_field<uint8_t, 25, 2>(raw_instr)) {}
+
+    operator RawInstruction() const {
+        return (static_cast<RawInstruction>(fmt_) << 25) |
+               OpcodeFunct_3::operator RawInstruction();
+    }
+
+private:
+    const uint8_t fmt_;
+};
+
+using ExtendedOpcodeTuple = std::tuple<PlainOpcode, OpcodeFunct_3, OpcodeFunct_3_7,
+                                       OpcodeFunct_3_7_width, OpcodeRs3, RawInstruction>;
 
 using ExtendedOpcode = typename impl::TupleToVariant<ExtendedOpcodeTuple>::type;
 

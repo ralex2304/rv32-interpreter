@@ -5,9 +5,7 @@
 
 #include <bit>
 
-namespace rvi {
-
-namespace rv32i {
+namespace rvi::rv32i {
 
 template <typename Oper>
 struct BranchInstruction: Instruction {
@@ -90,7 +88,5 @@ struct OperBgeu {
 };
 using Bgeu = BranchInstruction<OperBgeu>;
 
-} // namespace rv32i
-
-} // namespace rvi
+} // namespace rvi::rv32i
 

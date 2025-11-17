@@ -3,7 +3,8 @@
 #include "rvi_datatypes.h"
 #include "rvi_instruction_registry.h"
 #include "rvi_instruction_sets/rv32i/rv32i.h"
-#include "rvi_instruction_sets/rv32im/rv32im.h"
+#include "rvi_instruction_sets/rv32m/rv32m.h"
+#include "rvi_instruction_sets/rv32f/rv32f.h"
 #include "rvi_instructions.h"
 #include "rvi_logger.h"
 #include "rvi_operands.h"
@@ -22,8 +23,10 @@ Rvi::Rvi(const std::filesystem::path elf_path, const std::vector<std::string>& a
     try {
         LOG_F(INFO, "Registry: rv32i extension");
         rv32i ::add_instructions(registry_);
-        LOG_F(INFO, "Registry: rv32im extension");
-        rv32im::add_instructions(registry_);
+        LOG_F(INFO, "Registry: rv32m extension");
+        rv32m::add_instructions(registry_);
+        LOG_F(INFO, "Registry: rv32f extension");
+        rv32f::add_instructions(registry_);
     } catch (const InstructionRegistry::exception& e) {
         throw execution_error("Instruction registry error: "s + e.what());
     }
@@ -44,7 +47,6 @@ void Rvi::run() {
         throw riscv_exception(std::format("pc = 0x{:x} - {}", state_.pc.get(),
                                           magic_enum::enum_name(status)));
     }
-
 }
 
 ExecStatus Rvi::run_instruction_(const RawInstruction raw_instr) {

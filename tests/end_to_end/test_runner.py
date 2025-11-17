@@ -11,6 +11,24 @@ args = parser.parse_args()
 directory = args.test_directory
 interpreter =  args.interpreter
 
+def get_marches(marches):
+    march_build_list = ["rv32i", "rv32im", "rv32imf"]
+    # TODO: march list from build config
+    """
+    with open(directory + "/build_config.txt") as build_config:
+        march_build_list = build_config.read().split()
+    """
+
+    last_march = marches[-1]
+    if last_march.endswith("+"):
+        del marches[-1]
+
+        last_march = last_march[:last_march.rfind('+')]
+        marches += march_build_list[march_build_list.index(last_march):]
+
+    return marches
+
+
 def read_if_exists(filename):
     if not os.path.isfile(filename):
         return ""
@@ -26,7 +44,7 @@ while os.path.isfile(directory + f"/{str(test_num+1)}_config.txt"):
     print(f"Starting test {test_num}")
 
     with open(directory + f"/{str(test_num)}_config.txt") as config:
-        marches  = config.readline().split()
+        marches = get_marches(config.readline().split())
         argv_str = config.readline().split()
         ret_code = int(config.readline())
 

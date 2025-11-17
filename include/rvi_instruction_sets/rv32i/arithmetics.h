@@ -1,14 +1,13 @@
 #pragma once
 
 #include "rvi_datatypes.h"
+#include "rvi_instructions.h"
 #include "rvi_opcodes.h"
 #include "rvi_operands.h"
 
 #include <bit>
 
-namespace rvi {
-
-namespace rv32i {
+namespace rvi::rv32i {
 
 struct OperLui {
     static constexpr const char* name = "lui";
@@ -118,7 +117,7 @@ struct OperSrai {
         return std::bit_cast<UnsignValue>(std::bit_cast<SignValue>(rs1) >> shamt);
     }
 };
-using Srai = ArithmInstruction<OperSrai, RegValGetter<Operands::RS1>, ImmValGetter<Operands::IMM_I>>;
+using Srai = ArithmInstruction<OperSrai, RegValGetter<Operands::RS1>, ImmValGetter<Operands::SHAMT>>;
 
 struct OperAdd {
     static constexpr const char* name = "add";
@@ -220,6 +219,5 @@ struct OperAnd {
 };
 using And = ArithmInstruction<OperAnd, RegValGetter<Operands::RS1>, RegValGetter<Operands::RS2>>;
 
-} // namespace rv32i
+} // namespace rvi::rv32i
 
-} // namespace rvi

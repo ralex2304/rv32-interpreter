@@ -3,9 +3,7 @@
 #include "rvi_instructions.h"
 #include "rvi_opcodes.h"
 
-namespace rvi {
-
-namespace rv32i {
+namespace rvi::rv32i {
 
 template <typename Oper>
 struct StoreInstruction: Instruction {
@@ -52,7 +50,5 @@ struct OperSw {
 };
 using Sw = StoreInstruction<OperSw>;
 
-} // namespace rv32i
-
-} // namespace rvi
+} // namespace rvi::rv32i
 

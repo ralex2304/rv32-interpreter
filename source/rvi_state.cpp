@@ -92,7 +92,7 @@ void RviState::init_execution_environment(const std::vector<std::string>& argv) 
         mem.set<Address>(sp, argv_string_addr);
         sp += sizeof(Address);
 
-        mem.memcpy(argv_string_addr, arg.c_str(), arg.size());
+        mem.memcpy(argv_string_addr, arg.c_str(), static_cast<UnsignValue>(arg.size()));
 
         mem.set<uint8_t>(argv_string_addr + static_cast<Address>(arg.size()), 0);
 

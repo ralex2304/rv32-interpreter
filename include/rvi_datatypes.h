@@ -5,18 +5,22 @@
 
 namespace rvi {
 
-typedef uint32_t RawInstruction;
+using RawInstruction = uint32_t;
 
-typedef uint32_t UnsignValue;
-typedef int32_t  SignValue;
+using UnsignValue = uint32_t;
+using SignValue   = int32_t;
 
-typedef UnsignValue Address;
-typedef UnsignValue Register;
-typedef UnsignValue Immediate;
+using FloatValue  = float;
 
-typedef uint8_t RegisterNum;
+using Address     = UnsignValue;
+using Register    = UnsignValue;
+using Immediate   = UnsignValue;
+
+using RegisterNum = uint8_t;
 
 const size_t REG_NUM = 32;
+
+const size_t FLOAT_REG_NUM = 32;
 
 const size_t PAGE_SIZE = 4096;
 

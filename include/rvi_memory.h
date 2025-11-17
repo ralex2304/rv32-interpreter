@@ -6,6 +6,7 @@
 #include <array>
 #include <cstddef>
 #include <cstring>
+#include <format>
 #include <unordered_map>
 
 namespace rvi {
@@ -70,17 +71,41 @@ private:
 };
 
 struct Memory: public SparseMemory {
-    void memcpy(Address dest, const void* src, size_t n) {
+    void memcpy(Address dest, const void* src, UnsignValue n) {
         const std::byte* src_ptr = reinterpret_cast<const std::byte*>(src);
         while (n-- != 0) {
             set<std::byte>(dest++, *(src_ptr++));
         }
     }
 
-    void memset(Address addr, int val, size_t n) {
+    void memset(Address addr, int val, UnsignValue n) {
         while (n-- != 0) {
             set<std::byte>(addr++, static_cast<std::byte>(val));
         }
+    }
+
+    void dump(Logger::Verbosity level, Address addr, UnsignValue size) {
+        if (!Logger::is_level_needed(level))
+            return;
+
+        VLOG_SCOPE_F(level, "Memory dump: addr 0x%x; size 0x%x", addr, size);
+
+        std::string str = "Empty";
+        for (UnsignValue i = 0; i < size; i++) {
+            if (i % 16 == 0) {
+                if (i != 0)
+                    VLOG_F(level, "%s", str.c_str());
+
+                str = std::format("0x{:5x}", addr + i);
+            }
+
+            if (i % 2 == 0)
+                str += " ";
+
+            str += std::format("{:02x}", get<uint8_t>(addr + i));
+        }
+
+        VLOG_F(level, "%s", str.c_str());
     }
 };
 
