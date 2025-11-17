@@ -2,18 +2,6 @@ import argparse
 import os
 from subprocess import Popen, PIPE
 
-MARCH_INCREMENTAL_LIST = ["rv32i", "rv32im", "rv32imf"]
-
-def get_marches(marches):
-    last_march = marches[-1]
-    if last_march.endswith("+"):
-        del marches[-1]
-
-        last_march = last_march[:last_march.rfind('+')]
-        marches += MARCH_INCREMENTAL_LIST[MARCH_INCREMENTAL_LIST.index(last_march):]
-
-    return marches
-
 parser = argparse.ArgumentParser()
 parser.add_argument("test_directory", help="directory with test executable and config")
 parser.add_argument("-i", "--interpreter", default="../../build/rv32-interpreter",
@@ -22,6 +10,24 @@ parser.add_argument("-i", "--interpreter", default="../../build/rv32-interpreter
 args = parser.parse_args()
 directory = args.test_directory
 interpreter =  args.interpreter
+
+def get_marches(marches):
+    march_build_list = ["rv32i", "rv32im", "rv32imf"]
+    # TODO: march list from build config
+    """
+    with open(directory + "/build_config.txt") as build_config:
+        march_build_list = build_config.read().split()
+    """
+
+    last_march = marches[-1]
+    if last_march.endswith("+"):
+        del marches[-1]
+
+        last_march = last_march[:last_march.rfind('+')]
+        marches += march_build_list[march_build_list.index(last_march):]
+
+    return marches
+
 
 def read_if_exists(filename):
     if not os.path.isfile(filename):

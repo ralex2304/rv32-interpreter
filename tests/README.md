@@ -62,7 +62,7 @@ Each consists of 1 to 4 files:
 Not specifying `{n}_stdin.txt`, `{n}_stdout.txt` or `{n}_stderr.txt` is equivalent to them being empty
 
 `{n}_config.txt` must contain this 3 parameters each on new line:
-- List of `-march` options for this test to be run with. Only options that were listed in `build_config.txt` are possible
+- List of `-march` options for this test to be run with. Only options that were listed in `build_config.txt` are possible. You may append `+` to last option. It will automatically expand to following after given option arches from the build config. E.g `rv32im+` can be expanded to `rv32im rv32imf rv32imf_zbb`
 - Command line arguments that will be passed to process
 - Return code of process (0-255). It will be compared with returned code of process
 
@@ -71,7 +71,7 @@ E.g:
 ```
 1_config.txt
 ===
-rv32i rv32imf_zbb
+rv32i rv32imf+
 123 -i abc
 0
 ```

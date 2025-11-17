@@ -7,11 +7,11 @@ MIPT Baikal Electronics chair Compiler Technologies course task
 ## Supported instruction sets and extensions
 
 - `RV32I` - base integer
+- `RV32M` - integer multiplication and division
+- `RV32F` - single-precision floating-point
 
 TODO:
 
-- `RV32M` - integer multiplication and division
-- `RV32F` - single-precision floating-point
 - `RV32Zbb` - basic bit manipulation
 
 ### Syscalls
