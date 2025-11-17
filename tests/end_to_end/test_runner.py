@@ -2,6 +2,18 @@ import argparse
 import os
 from subprocess import Popen, PIPE
 
+MARCH_INCREMENTAL_LIST = ["rv32i", "rv32im", "rv32imf"]
+
+def get_marches(marches):
+    last_march = marches[-1]
+    if last_march.endswith("+"):
+        del marches[-1]
+
+        last_march = last_march[:last_march.rfind('+')]
+        marches += MARCH_INCREMENTAL_LIST[MARCH_INCREMENTAL_LIST.index(last_march):]
+
+    return marches
+
 parser = argparse.ArgumentParser()
 parser.add_argument("test_directory", help="directory with test executable and config")
 parser.add_argument("-i", "--interpreter", default="../../build/rv32-interpreter",
@@ -26,7 +38,7 @@ while os.path.isfile(directory + f"/{str(test_num+1)}_config.txt"):
     print(f"Starting test {test_num}")
 
     with open(directory + f"/{str(test_num)}_config.txt") as config:
-        marches  = config.readline().split()
+        marches = get_marches(config.readline().split())
         argv_str = config.readline().split()
         ret_code = int(config.readline())
 

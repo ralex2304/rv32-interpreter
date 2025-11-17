@@ -54,7 +54,7 @@ struct FloatMoveToFreg: Instruction {
 struct OperFcvtws {
     static constexpr const char* name = "fcvt.w.s";
     static constexpr ExtendedOpcode ext_opcode = OpcodeFunct_3_7_width(PlainOpcodes::OP_FP,
-                                                            ROUND_MODE, 0b00000, 0b11000'00);
+                                                     FCVTWS_ROUND_MODE, 0b00000, 0b11000'00);
 
     static UnsignValue evaluate(FloatValue rs1) {
         return std::bit_cast<UnsignValue>(static_cast<SignValue>(rs1));
@@ -65,7 +65,7 @@ using Fcvtws = FloatMoveToReg<OperFcvtws>;
 struct OperFcvtwus {
     static constexpr const char* name = "fcvt.wu.s";
     static constexpr ExtendedOpcode ext_opcode = OpcodeFunct_3_7_width(PlainOpcodes::OP_FP,
-                                                            ROUND_MODE, 0b00001, 0b11000'00);
+                                                     FCVTWS_ROUND_MODE, 0b00001, 0b11000'00);
 
     static UnsignValue evaluate(FloatValue rs1) {
         return static_cast<UnsignValue>(rs1);
@@ -120,7 +120,7 @@ using Fmvwx = FloatMoveToFreg<OperFmvwx>;
 struct OperFclass {
     static constexpr const char* name = "fclass.s";
     static constexpr ExtendedOpcode ext_opcode = OpcodeFunct_3_7_width(PlainOpcodes::OP_FP,
-                                                                 0b001, 0b00000, 0b11000'00);
+                                                                 0b001, 0b00000, 0b11100'00);
 
     static UnsignValue evaluate(FloatValue rs1) {
         // TODO: fclass.s

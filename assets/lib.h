@@ -2,14 +2,25 @@
 
 #include "api.h"
 
-inline void* memcpy(void* dest, const void* src, size_t n) {
-    while (n--)
-        *((char*)dest) = *((char*)src);
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+void* memcpy(void* dest, const void* src, size_t n) {
+    for (size_t i = 0; i < n; i++)
+        ((char*)dest)[i] = ((char*)src)[i];
 
     return dest;
 }
 
-inline int isspace(int c) {
+void* memset(void* s, int c, size_t n) {
+    for (size_t i = 0; i < n; i++)
+        ((char*)s)[i] = c;
+
+    return s;
+}
+
+int isspace(int c) {
     return c == ' ' || c == '\f' || c == '\n' || c == '\r' || c == '\t' || c == '\v';
 }
 
@@ -37,6 +48,10 @@ inline int atoi(const char* str) {
     return negative ? result : -result;
 }
 
+#ifdef __cplusplus
+} // extern "C"
+#endif
+
 inline int print_int(const int a, int fd = 2) {
     static const int BUF_SIZE = 64;
     char buf[BUF_SIZE];
@@ -51,7 +66,7 @@ inline int print_int(const int a, int fd = 2) {
     }
 
     if (num == 0 && i == BUF_SIZE - 2)
-        return write(fd, "0", 1);
+        return write(fd, "0\n", 2);
 
     if (a < 0 && i >= 0)
         buf[i--] = '-';

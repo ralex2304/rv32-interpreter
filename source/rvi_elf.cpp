@@ -71,13 +71,16 @@ void ElfLoader::load_to_memory(Memory& memory) const {
     Elf32_Phdr* p_hdr = prog_header_table_;
     for (size_t i = 0; i < elf_header_->e_phnum; i++, p_hdr++) {
         if (p_hdr->p_type == PT_LOAD) {
-            LOG_F(DUMP, "Loading PT_LOAD program header. Address 0x%x", p_hdr->p_vaddr);
+            LOG_SCOPE_F(DUMP, "Loading PT_LOAD program header.");
+            LOG_F(DUMP, "vaddr 0x%x, offset 0x%x, filesz 0x%x, memsz 0x%x",
+                        p_hdr->p_vaddr, p_hdr->p_offset, p_hdr->p_filesz, p_hdr->p_memsz);
 
             memory.memcpy(p_hdr->p_vaddr, file_.data + p_hdr->p_offset, p_hdr->p_filesz);
 
             if (p_hdr->p_memsz > p_hdr->p_filesz)
                 memory.memset(p_hdr->p_vaddr + p_hdr->p_filesz, 0, p_hdr->p_memsz - p_hdr->p_filesz);
 
+            memory.dump(Logger::DUMP, p_hdr->p_vaddr, p_hdr->p_filesz);
         } else if (p_hdr->p_type == PT_INTERP) {
             throw exception("dynamic linking is unsupported");
         } else if (p_hdr->p_type == PT_PHDR) {

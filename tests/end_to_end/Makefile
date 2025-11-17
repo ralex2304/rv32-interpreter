@@ -5,7 +5,7 @@ AS  = riscv64-unknown-elf-as
 ASFLAGS   = -mabi=ilp32
 CFLAGS    = -mabi=ilp32 -std=c11 -Wall -Wextra -I$(ASSETS_DIR)
 CXXFLAGS  = -mabi=ilp32 -std=c++17 -Wall -Wextra -I$(ASSETS_DIR)
-LDFLAGS   = -mabi=ilp32 -nostartfiles -nostdlib
+LDFLAGS   = -mabi=ilp32 -nostartfiles -nostdlib -mno-relax
 
 SRC_DIR ?= ./
 
@@ -15,10 +15,8 @@ ASSETS_DIR = ../../assets
 API_S = $(ASSETS_DIR)/api.s
 API_O = $(BUILD_DIR)/api.o
 
-.PHONY: all
-all:
 
-$(API_O): $(API_S)
+$(API_O): $(API_S) | $(BUILD_DIR)
 	$(AS) $(ASFLAGS) -march=rv32i $< -o $@
 
 $(BUILD_DIR)/%_$(ARCH).o: $(SRC_DIR)/%.s | $(BUILD_DIR)

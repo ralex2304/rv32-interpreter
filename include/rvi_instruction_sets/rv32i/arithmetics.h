@@ -117,7 +117,7 @@ struct OperSrai {
         return std::bit_cast<UnsignValue>(std::bit_cast<SignValue>(rs1) >> shamt);
     }
 };
-using Srai = ArithmInstruction<OperSrai, RegValGetter<Operands::RS1>, ImmValGetter<Operands::IMM_I>>;
+using Srai = ArithmInstruction<OperSrai, RegValGetter<Operands::RS1>, ImmValGetter<Operands::SHAMT>>;
 
 struct OperAdd {
     static constexpr const char* name = "add";

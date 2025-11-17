@@ -5,10 +5,12 @@ project(rv32-interpreter-tests)
 set(END2END_TEST_LIST
     hello_asm
     echo
+    vector_add
     fibonacci
     factorial
     bubble_sort
     quick_sort
+    float_fma
 )
 
 set(TASK_TEST_LIST
@@ -41,6 +43,7 @@ foreach(test IN LISTS END2END_TEST_LIST)
         OUTPUT ${END2END_TEST_DIR}/${test}/build
         COMMAND ${CMAKE_COMMAND} -E chdir ${END2END_TEST_DIR}
             python3 test_build.py ${test}
+        DEPENDS ${END2END_TEST_DIR}
     )
 
     list(APPEND END2END_TEST_BUILD_LIST ${END2END_TEST_DIR}/${test}/build)
