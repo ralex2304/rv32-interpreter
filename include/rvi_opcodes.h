@@ -107,24 +107,24 @@ private:
     const uint8_t funct7_;
 };
 
-class OpcodeFunct_3_7_width: public OpcodeFunct_3_7 {
+class OpcodeFunct_3_5_7: public OpcodeFunct_3_7 {
 public:
-    constexpr OpcodeFunct_3_7_width(PlainOpcodes plain_opcode, uint8_t funct3,
-                                    uint8_t width, uint8_t funct7)
+    constexpr OpcodeFunct_3_5_7(PlainOpcodes plain_opcode, uint8_t funct3,
+                                uint8_t funct5, uint8_t funct7)
         : OpcodeFunct_3_7(plain_opcode, funct3, funct7)
-        , width_(width) {}
+        , funct5_(funct5) {}
 
-    OpcodeFunct_3_7_width(RawInstruction raw_instr)
+    OpcodeFunct_3_5_7(RawInstruction raw_instr)
         : OpcodeFunct_3_7(raw_instr)
-        , width_(get_instr_field<uint8_t, 20, 5>(raw_instr)) {}
+        , funct5_(get_instr_field<uint8_t, 20, 5>(raw_instr)) {}
 
     operator RawInstruction() const {
-        return (static_cast<RawInstruction>(width_) << 20) |
+        return (static_cast<RawInstruction>(funct5_) << 20) |
                OpcodeFunct_3_7::operator RawInstruction();
     }
 
 private:
-    const uint8_t width_;
+    const uint8_t funct5_;
 };
 
 class OpcodeRs3: public OpcodeFunct_3 {
@@ -147,7 +147,7 @@ private:
 };
 
 using ExtendedOpcodeTuple = std::tuple<PlainOpcode, OpcodeFunct_3, OpcodeFunct_3_7,
-                                       OpcodeFunct_3_7_width, OpcodeRs3, RawInstruction>;
+                                       OpcodeFunct_3_5_7, OpcodeRs3, RawInstruction>;
 
 using ExtendedOpcode = typename impl::TupleToVariant<ExtendedOpcodeTuple>::type;
 

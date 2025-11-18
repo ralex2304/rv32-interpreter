@@ -55,11 +55,13 @@ Next, there can be several test run configs. Config files for each must start wi
 Each consists of 1 to 4 files:
 
 - `{n}_config.txt` - run configuration: `march`, `argv`, return code
-- `{n}_stdin.txt` [optional] - contents of this file will be sent to process
-- `{n}_stdout.txt` [optional] - process's `stdout` will be compared with contents of this file
-- `{n}_stderr.txt` [optional] - same with `stderr`
+- `{n}_stdin.{txt|bin}` [optional] - contents of this file will be sent to process
+- `{n}_stdout.{txt|bin}` [optional] - process's `stdout` will be compared with contents of this file
+- `{n}_stderr.{txt|bin}` [optional] - same with `stderr`
 
-Not specifying `{n}_stdin.txt`, `{n}_stdout.txt` or `{n}_stderr.txt` is equivalent to them being empty
+Not specifying `{n}_stdin.{txt|bin}`, `{n}_stdout.{txt|bin}` or `{n}_stderr.{txt|bin}` is equivalent to them being empty
+
+`.txt` and `.bin` are equivalent and used only to hint people how to treat contents of files.
 
 `{n}_config.txt` must contain this 3 parameters each on new line:
 - List of `-march` options for this test to be run with. Only options that were listed in `build_config.txt` are possible. You may append `+` to last option. It will automatically expand to following after given option arches from the build config. E.g `rv32im+` can be expanded to `rv32im rv32imf rv32imf_zbb`

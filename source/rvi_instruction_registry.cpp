@@ -25,7 +25,8 @@ void InstructionRegistry::add_instruction(std::unique_ptr<Instruction> instructi
 
         if (!inserted)
             throw exception("Error adding instruction \""s + std::string(instr_name) +
-                            "\": already exist"s);
+                            "\": already exist ("s +
+                            std::string(registry[ext_opcode_value]->get_name()) + ")"s);
     }, ext_opcode);
 }
 

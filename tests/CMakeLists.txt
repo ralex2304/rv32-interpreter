@@ -8,10 +8,13 @@ set(END2END_TEST_LIST
     vector_add
     fibonacci
     factorial
+    print_int
     bubble_sort
     quick_sort
     float_fma
     fclass
+    bit_count
+    bit_rotation
 )
 
 set(TASK_TEST_LIST
@@ -25,8 +28,10 @@ set(TASK_TEST_LIST
     rv32imf/test_fsub
     rv32imf/test_fdiv
     rv32imf/test_fmul
-    rv32imf_zbb/test_shift
     rv32imf_zbb/test_andn
+    rv32imf_zbb/test_shift
+    rv32imf_zbb/test_or
+    rv32imf_zbb/test_xor
 )
 
 if(NOT PROJECT_IS_TOP_LEVEL)
@@ -44,7 +49,7 @@ foreach(test IN LISTS END2END_TEST_LIST)
         OUTPUT ${END2END_TEST_DIR}/${test}/build
         COMMAND ${CMAKE_COMMAND} -E chdir ${END2END_TEST_DIR}
             python3 test_build.py ${test}
-        DEPENDS ${END2END_TEST_DIR}
+        DEPENDS ${END2END_TEST_DIR}/${test}/
     )
 
     list(APPEND END2END_TEST_BUILD_LIST ${END2END_TEST_DIR}/${test}/build)
