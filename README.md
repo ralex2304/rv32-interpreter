@@ -9,9 +9,6 @@ MIPT Baikal Electronics chair Compiler Technologies course task
 - `RV32I` - base integer
 - `RV32M` - integer multiplication and division
 - `RV32F` - single-precision floating-point
-
-TODO:
-
 - `RV32Zbb` - basic bit manipulation
 
 ### Syscalls
