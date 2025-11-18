@@ -52,7 +52,11 @@ inline int atoi(const char* str) {
 } // extern "C"
 #endif
 
-inline int print_int(const int a, int fd = 2) {
+#ifdef __cplusplus
+inline int print_int(const int a, int fd = stdout) {
+#else
+inline int print_int(const int a, int fd) {
+#endif
     static const int BUF_SIZE = 64;
     char buf[BUF_SIZE];
 

@@ -2,9 +2,9 @@
 
 #include "rvi_datatypes.h"
 #include "rvi_instructions.h"
-#include "rvi_logger.h"
 #include "rvi_opcodes.h"
 #include "rvi_operands.h"
+
 #include <bit>
 
 namespace rvi::rv32zbb {
@@ -34,9 +34,6 @@ struct OperRori {
     static constexpr ExtendedOpcode ext_opcode = OpcodeFunct_3_7(PlainOpcodes::OP_IMM, 0b101, 0b0110000);
 
     static UnsignValue evaluate(UnsignValue rs1, UnsignValue shamt) noexcept {
-        if (shamt & 0x10)
-            LOG_F(ERROR, "rori: shamt[5] must be 0");
-
         return std::rotr(rs1, static_cast<int>(shamt));
     }
 };

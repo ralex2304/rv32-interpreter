@@ -24,12 +24,19 @@ def get_marches(marches):
 
     return marches
 
+def read_if_exists(filename, extensions=[""]):
+    file_ext = None
+    for ext in extensions:
+        if os.path.isfile(filename + ext):
+            if not file_ext is None:
+                print(f"\t[WARN] {file_ext} and {ext} files are provided for {filename}. Using {file_ext}")
+            else:
+                file_ext = ext
 
-def read_if_exists(filename):
-    if not os.path.isfile(filename):
-        return ""
+    if file_ext is None:
+        return b""
 
-    with open(filename) as file:
+    with open(filename + file_ext, "rb") as file:
         return file.read()
 
 test_num = 0
@@ -44,16 +51,16 @@ while os.path.isfile(directory + f"/{str(test_num+1)}_config.txt"):
         argv_str = config.readline().split()
         ret_code = int(config.readline())
 
-    stdin  = read_if_exists(directory + f"/{str(test_num)}_stdin.txt")
-    stdout = read_if_exists(directory + f"/{str(test_num)}_stdout.txt")
-    stderr = read_if_exists(directory + f"/{str(test_num)}_stderr.txt")
+    stdin  = read_if_exists(directory + f"/{str(test_num)}_stdin",  [".txt", ".bin"])
+    stdout = read_if_exists(directory + f"/{str(test_num)}_stdout", [".txt", ".bin"])
+    stderr = read_if_exists(directory + f"/{str(test_num)}_stderr", [".txt", ".bin"])
 
     for march_num, march in enumerate(marches):
         tests_run_count += 1
         print(f"\tRunning test {test_num}.{march_num + 1} for -march={march}")
 
         p = Popen([interpreter] + [directory + f"/build/test_{march}"] + argv_str,
-                  stdin=PIPE, stdout=PIPE, stderr=PIPE, text=True)
+                  stdin=PIPE, stdout=PIPE, stderr=PIPE)
 
         stdout_data, stderr_data = p.communicate(input=stdin)
         ret = p.returncode
